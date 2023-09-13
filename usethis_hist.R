@@ -36,6 +36,36 @@ fs::file_delete(
 
 roxygen2::roxygenize()
 
+# Connecting to github ----
+
+usethis::use_github()
 
 
+# Dependencies ----
 
+## depends ----
+usethis::use_package("rlang", type = "Depends")
+
+
+## imports ----
+usethis::use_package("isoband")
+usethis::use_package("tibble")
+usethis::use_package("dplyr")
+usethis::use_package("purrr")
+usethis::use_package("ggdensity")
+usethis::use_package("sf")
+usethis::use_package("tidyr")
+
+
+## suggests ----
+usethis::use_package("readr", type = "Suggests")
+usethis::use_package("readr", type = "Suggests")
+usethis::use_package("ggplot2", type = "Suggests")
+
+
+# Data ----
+usethis::use_data_raw("s01")
+
+# Documentation ----
+
+usethis::use_vignette(name = "usage", title = "Using densityarea")

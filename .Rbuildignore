@@ -4,3 +4,4 @@
 ^\.Rproj\.user$
 usethis_hist.R
 ^LICENSE\.md$
+^data-raw$
