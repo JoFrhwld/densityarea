@@ -1,0 +1,56 @@
+---
+title: "Using densityarea"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using densityarea}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(densityarea)
+library(dplyr)
+library(purrr)
+library(sf)
+library(ggplot2)
+library(ggdensity)
+
+data(s01)
+```
+
+```{r}
+head(s01)
+```
+
+```{r}
+s01 |> 
+  ggplot(
+    aes(
+      x = F2,
+      y = F1
+    )
+  )+
+    stat_hdr(probs = 0.1)+
+    scale_y_reverse()+
+    scale_x_reverse()
+```
+
+```{r}
+density_area(s01$F1, s01$F2, probs = ppoints(40)) ->
+  iso_poly
+```
+
+```{r}
+s01 |> 
+  reframe(
+    area = density_area(log(F1), log(F2), probs = c(0.5, 0.6))
+  ) |> 
+  tidyr::unnest(area)
+```
