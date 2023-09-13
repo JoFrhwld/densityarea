@@ -5,3 +5,4 @@
 usethis_hist.R
 ^LICENSE\.md$
 ^data-raw$
+^README\.Rmd$
