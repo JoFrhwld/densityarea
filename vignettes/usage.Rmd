@@ -17,7 +17,9 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(densityarea)
 library(dplyr)
+library(tidyr)
 library(purrr)
+library(forcats)
 library(sf)
 library(ggplot2)
 library(ggdensity)
@@ -43,14 +45,27 @@ s01 |>
 ```
 
 ```{r}
-density_area(s01$F1, s01$F2, probs = ppoints(40)) ->
-  iso_poly
+s01 |> 
+  group_by(name) |> 
+  summarise(
+    polys = density_polygons(F2, F1, probs = c(0.1, 0.3, 0.5), as_st = T)
+  ) |> 
+  unnest(polys) 
+
+
 ```
 
 ```{r}
 s01 |> 
   reframe(
-    area = density_area(log(F1), log(F2), probs = c(0.5, 0.6))
+    .by = plt_vclass,
+    area = density_area(F1, F2, prob = 0.95),
+    n = n()
   ) |> 
-  tidyr::unnest(area)
+  tidyr::unnest(area) |> 
+  mutate(
+    plt_vclass = fct_reorder(plt_vclass, area)
+  ) |> 
+  ggplot(aes(plt_vclass, area))+
+    geom_point(aes(size = n))
 ```
