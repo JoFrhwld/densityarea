@@ -59,7 +59,7 @@ usethis::use_package("tidyr")
 
 ## suggests ----
 usethis::use_package("readr", type = "Suggests")
-usethis::use_package("readr", type = "Suggests")
+usethis::use_package("forcats", type = "Suggests")
 usethis::use_package("ggplot2", type = "Suggests")
 
 

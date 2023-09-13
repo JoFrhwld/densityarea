@@ -24,6 +24,7 @@ Imports:
     tibble,
     tidyr
 Suggests: 
+    forcats,
     ggplot2,
     knitr,
     readr,
