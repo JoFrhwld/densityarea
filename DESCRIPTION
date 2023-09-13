@@ -1,0 +1,15 @@
+Type: Package
+Package: densityarea
+Title: Areas of Bivarate Density Distributions
+Version: 0.1.0
+Authors@R: 
+    person("Josef", "Fruehwald", , "jofrhwld@gmail.com", role = c("aut", "cre"))
+Description: With bivarate data, it is possible to calculate 2-dimensional
+    kernel density estimates that return polygons at given levels of
+    probablity. `densityarea` calculates the area of the these density
+    estimates.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
