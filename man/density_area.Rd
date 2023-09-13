@@ -4,7 +4,7 @@
 \alias{density_area}
 \title{Density Area}
 \usage{
-density_area(x, y, probs = 0.5, ...)
+density_area(x, y, probs = 0.5, drop_geometry = T, ...)
 }
 \description{
 Density Area
