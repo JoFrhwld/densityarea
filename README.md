@@ -1,4 +1,3 @@
-re
 # densityarea
 
 <!-- badges: start -->
