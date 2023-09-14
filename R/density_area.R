@@ -1,25 +1,9 @@
-
-#' Density polygons
-#'
-#' Given numeric vectors \code{x} and \{y}, \code{density_polygons} will return
-#' a dataframe, or list of a dataframe, of the polygon defining 2d kernel
-#' densities
-#'
-#' @param x
-#' @param y
-#' @param probs
-#' @param as_sf
-#' @param as_list
-#' @param ...
-#'
+#' get isobands
 #' @export
-
-density_polygons <- function(
+get_isobands <- function(
     x,
     y,
     probs = 0.5,
-    as_sf = FALSE,
-    as_list = TRUE,
     ...
 ){
   tibble::tibble(
@@ -45,7 +29,46 @@ density_polygons <- function(
     ) |>
     purrr::list_rbind(
       names_to = "band"
-    ) |>
+    ) ->
+    isobands_df
+
+  return(isobands_df)
+}
+
+
+#' Density polygons
+#'
+#' Given numeric vectors \code{x} and \{y}, \code{density_polygons} will return
+#' a dataframe, or list of a dataframe, of the polygon defining 2d kernel
+#' densities
+#'
+#' @param x
+#' @param y
+#' @param probs
+#' @param as_sf
+#' @param as_list
+#' @param ...
+#'
+#' @export
+
+density_polygons <- function(
+    x,
+    y,
+    probs = 0.5,
+    as_sf = FALSE,
+    as_list = TRUE,
+    ...
+){
+
+  xname <- deparse(substitute(x))
+  yname <- deparse(substitute(y))
+
+  nameswap <- c("x", "y")
+  names(nameswap) <- c(xname, yname)
+
+  isobands <- get_isobands(x, y, probs, ...)
+
+  isobands |>
     tidyr::separate(
       band,
       into = c("start", "end"),
@@ -68,6 +91,9 @@ density_polygons <- function(
       x,
       y,
       order
+    ) |>
+    rename(
+      any_of(nameswap)
     )->
     iso_poly_df
 
@@ -79,7 +105,7 @@ density_polygons <- function(
 
   iso_poly_df |>
     sf::st_as_sf(
-      coords = c("x", "y")
+      coords = c(xname, yname)
     )  |>
     dplyr::group_by(
       band_id, id, prob
