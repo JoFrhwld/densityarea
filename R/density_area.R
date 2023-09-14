@@ -1,35 +1,29 @@
 #' get isobands
+#'
+#' @param x
+#' @param y
+#' @param probs
+#' @param ...
+#'
 #' @export
-get_isobands <- function(
-    x,
-    y,
-    probs = 0.5,
-    ...
-){
-  tibble::tibble(
-    x = x,
-    y = y
-  ) |>
-    ggdensity::get_hdr(
-      probs = probs,
-      ...
-    ) ->
+get_isobands <- function(x,
+                         y,
+                         probs = 0.5,
+                         ...) {
+  tibble::tibble(x = x,
+                 y = y) |>
+    ggdensity::get_hdr(probs = probs,
+                       ...) ->
     density_estimate
 
   density_estimate$df_est$z <- density_estimate$df_est$fhat
 
-  isobands <- xyz_to_isobands(
-    density_estimate$df_est,
-    density_estimate$breaks
-  )
+  isobands <- xyz_to_isobands(density_estimate$df_est,
+                              density_estimate$breaks)
 
   isobands |>
-    purrr::map(
-      tibble::as_tibble
-    ) |>
-    purrr::list_rbind(
-      names_to = "band"
-    ) ->
+    purrr::map(tibble::as_tibble) |>
+    purrr::list_rbind(names_to = "band") ->
     isobands_df
 
   return(isobands_df)
@@ -51,15 +45,12 @@ get_isobands <- function(
 #'
 #' @export
 
-density_polygons <- function(
-    x,
-    y,
-    probs = 0.5,
-    as_sf = FALSE,
-    as_list = TRUE,
-    ...
-){
-
+density_polygons <- function(x,
+                             y,
+                             probs = 0.5,
+                             as_sf = FALSE,
+                             as_list = TRUE,
+                             ...) {
   xname <- deparse(substitute(x))
   yname <- deparse(substitute(y))
 
@@ -83,45 +74,35 @@ density_polygons <- function(
       prob = sort(probs)[band_id],
       order = row_number()
     ) |>
-    select(-start, -end) |>
-    select(
-      band_id,
-      id,
-      prob,
-      x,
-      y,
-      order
-    ) |>
-    rename(
-      any_of(nameswap)
-    )->
+    select(-start,-end) |>
+    select(band_id,
+           id,
+           prob,
+           x,
+           y,
+           order) |>
+    rename(any_of(nameswap)) ->
     iso_poly_df
 
-  if(!as_sf & as_list){
+  if (!as_sf & as_list) {
     return(list(iso_poly_df))
-  }else if(!as_sf){
+  } else if (!as_sf) {
     return(iso_poly_df)
   }
 
   iso_poly_df |>
-    sf::st_as_sf(
-      coords = c(xname, yname)
-    )  |>
-    dplyr::group_by(
-      band_id, id, prob
-    ) |>
+    sf::st_as_sf(coords = c(xname, yname))  |>
+    dplyr::group_by(band_id, id, prob) |>
     dplyr::summarise() |>
     sf::st_cast("POLYGON") |>
     sf::st_convex_hull() |>
-    dplyr::group_by(
-      band_id, prob
-    ) |>
+    dplyr::group_by(band_id, prob) |>
     dplyr::summarise() ->
     iso_poly_st
 
-  if(as_list){
+  if (as_list) {
     return(list(iso_poly_st))
-  }else{
+  } else{
     return(iso_poly_st)
   }
 }
@@ -130,14 +111,12 @@ density_polygons <- function(
 #' Density Area
 #' @export
 
-density_area <- function(
-    x,
-    y,
-    probs = 0.5,
-    drop_geometry = T,
-    as_list = T,
-    ...){
-
+density_area <- function(x,
+                         y,
+                         probs = 0.5,
+                         drop_geometry = T,
+                         as_list = T,
+                         ...) {
   density_polygons(
     x = x,
     y = y,
@@ -149,22 +128,16 @@ density_area <- function(
     iso_poly_st
 
   iso_poly_st |>
-    map(
-      \(x) x |>
-        dplyr::mutate(
-          area = sf::st_area(geometry)
-        )
-    ) -> area_poly
+    map(\(x) x |>
+          dplyr::mutate(area = sf::st_area(geometry))) -> area_poly
 
-  if(drop_geometry){
+  if (drop_geometry) {
     area_poly |>
-      map(
-        \(x) x |> sf::st_drop_geometry()
-      )->
+      map(\(x) x |> sf::st_drop_geometry()) ->
       area_poly
   }
 
-  if(!as_list){
+  if (!as_list) {
     area_poly <- area_poly |>
       purrr::list_rbind()
   }
