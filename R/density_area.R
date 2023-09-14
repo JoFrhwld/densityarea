@@ -114,7 +114,7 @@ density_polygons <- function(x,
 density_area <- function(x,
                          y,
                          probs = 0.5,
-                         drop_geometry = T,
+                         as_sf = F,
                          as_list = T,
                          ...) {
   density_polygons(
@@ -131,7 +131,7 @@ density_area <- function(x,
     purrr::map(\(x) x |>
           dplyr::mutate(area = sf::st_area(geometry))) -> area_poly
 
-  if (drop_geometry) {
+  if (!as_sf) {
     area_poly |>
       purrr::map(\(x) x |> sf::st_drop_geometry()) ->
       area_poly
