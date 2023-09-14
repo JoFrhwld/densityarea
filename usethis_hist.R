@@ -55,6 +55,7 @@ usethis::use_package("purrr")
 usethis::use_package("ggdensity")
 usethis::use_package("sf")
 usethis::use_package("tidyr")
+usethis::use_package("sfheaders")
 
 
 ## suggests ----

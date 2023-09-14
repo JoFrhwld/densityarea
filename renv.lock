@@ -396,6 +396,16 @@
       "Hash": "15e9634c0fcd294799e9b2e929ed1b86",
       "Requirements": []
     },
+    "geometries": {
+      "Package": "geometries",
+      "Version": "0.2.3",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "122e8341ead01f3746dd312ecc5ffd28",
+      "Requirements": [
+        "Rcpp"
+      ]
+    },
     "gert": {
       "Package": "gert",
       "Version": "1.9.3",
@@ -978,6 +988,17 @@
         "magrittr",
         "s2",
         "units"
+      ]
+    },
+    "sfheaders": {
+      "Package": "sfheaders",
+      "Version": "0.4.3",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "0b0a55852e87b8f8478efb505eba2ebe",
+      "Requirements": [
+        "Rcpp",
+        "geometries"
       ]
     },
     "stringi": {
