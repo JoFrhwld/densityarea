@@ -1,11 +1,25 @@
+
 #' Density polygons
+#'
+#' Given numeric vectors \code{x} and \{y}, \code{density_polygons} will return
+#' a dataframe, or list of a dataframe, of the polygon defining 2d kernel
+#' densities
+#'
+#' @param x
+#' @param y
+#' @param probs
+#' @param as_sf
+#' @param as_list
+#' @param ...
+#'
 #' @export
 
 density_polygons <- function(
     x,
     y,
     probs = 0.5,
-    as_st = FALSE,
+    as_sf = FALSE,
+    as_list = TRUE,
     ...
 ){
   tibble::tibble(
@@ -57,8 +71,10 @@ density_polygons <- function(
     )->
     iso_poly_df
 
-  if(!as_st){
+  if(!as_sf & as_list){
     return(list(iso_poly_df))
+  }else if(!as_sf){
+    return(iso_poly_df)
   }
 
   iso_poly_df |>
@@ -77,21 +93,31 @@ density_polygons <- function(
     dplyr::summarise() ->
     iso_poly_st
 
-  return(list(iso_poly_st))
-
+  if(as_list){
+    return(list(iso_poly_st))
+  }else{
+    return(iso_poly_st)
+  }
 }
 
 
 #' Density Area
 #' @export
 
-density_area <- function(x, y, probs = 0.5, drop_geometry = T, ...){
+density_area <- function(
+    x,
+    y,
+    probs = 0.5,
+    drop_geometry = T,
+    as_list = T,
+    ...){
 
   density_polygons(
     x = x,
     y = y,
     probs = probs,
-    as_st = T,
+    as_sf = T,
+    as_list = T,
     ...
   ) ->
     iso_poly_st
@@ -110,6 +136,11 @@ density_area <- function(x, y, probs = 0.5, drop_geometry = T, ...){
         \(x) x |> sf::st_drop_geometry()
       )->
       area_poly
+  }
+
+  if(!as_list){
+    area_poly <- area_poly |>
+      purrr::list_rbind()
   }
 
   return(area_poly)
