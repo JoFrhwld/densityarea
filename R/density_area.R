@@ -6,42 +6,58 @@
 #' @param ...
 #'
 #' @export
-get_isobands <- function(x,
+get_isolines<- function(x,
                          y,
                          probs = 0.5,
                          ...) {
+
+  rangex = ((range(x) * 0.25) * c(-1, 1)) + range(x)
+  rangey = ((range(y) * 0.5) * c(-1, 1)) + range(y)
   tibble::tibble(x = x,
                  y = y) |>
     ggdensity::get_hdr(probs = probs,
+                       rangex = rangex,
+                       rangey = rangey,
                        ...) ->
     density_estimate
 
   density_estimate$df_est$z <- density_estimate$df_est$fhat
 
-  isobands <- xyz_to_isobands(density_estimate$df_est,
+  isolines <- xyz_to_isolines(density_estimate$df_est,
                               density_estimate$breaks)
 
-  isobands |>
+  isolines |>
     purrr::map(tibble::as_tibble) |>
-    purrr::list_rbind(names_to = "band") ->
-    isobands_df
+    purrr::list_rbind(names_to = "line") ->
+    isolines_df
 
-  return(isobands_df)
+  return(isolines_df)
 }
 
 
 #' Density polygons
 #'
-#' Given numeric vectors \code{x} and \{y}, \code{density_polygons} will return
-#' a dataframe, or list of a dataframe, of the polygon defining 2d kernel
-#' densities
+#' @description
+#' Given numeric vectors `x` and `y`, `density_polygons()` will return
+#' a data frame, or list of a data frames, of the polygon defining 2d kernel
+#' densities.
 #'
-#' @param x
-#' @param y
-#' @param probs
-#' @param as_sf
-#' @param as_list
-#' @param ...
+#' @details
+#' When using `density_polygons()` together with tidyverse verbs, like
+#' [dplyr::summarise()], `as_list` should be `TRUE`.
+#'
+#'
+#' @param x,y Numeric data dimensions
+#' @param probs Probabilities to compute density polygons for
+#' @param as_sf Should the returned values be [sf::sf]? Defaults to `FALSE`.
+#' @param as_list Should the returned value be a list? Defaults to `TRUE` to
+#' work well with tidyverse list columns
+#' @param ... Additional arguments to be passed to [ggdensity::get_hdr()]
+#'
+#' @returns A list of data frames, if `as_list=TRUE`, or just a data frame,
+#' if `as_list=FALSE`
+#'
+#'
 #'
 #' @export
 
@@ -57,25 +73,20 @@ density_polygons <- function(x,
   nameswap <- c("x", "y")
   names(nameswap) <- c(xname, yname)
 
-  isobands <- get_isobands(x, y, probs, ...)
+  isolines <- get_isolines(x, y, probs, ...)
 
-  isobands |>
-    tidyr::separate(
-      band,
-      into = c("start", "end"),
-      sep = ":",
-      convert = T
-    ) |>
+  isolines |>
     dplyr::mutate(
-      band_id = start |>
+      line_id = line |>
+        as.numeric() |>
         dplyr::desc() |>
         as.factor() |>
         as.numeric(),
-      prob = sort(probs)[band_id],
+      prob = sort(probs)[line_id],
       order = dplyr::row_number()
     ) |>
-    dplyr::select(-start,-end) |>
-    dplyr::select(band_id,
+    dplyr::select(-line) |>
+    dplyr::select(line_id,
            id,
            prob,
            x,
@@ -91,12 +102,19 @@ density_polygons <- function(x,
   }
 
   iso_poly_df |>
-    sf::st_as_sf(coords = c(xname, yname))  |>
-    dplyr::group_by(band_id, id, prob) |>
-    dplyr::summarise() |>
-    sf::st_cast("POLYGON") |>
-    sf::st_convex_hull() |>
-    dplyr::group_by(band_id, prob) |>
+    dplyr::mutate(
+      polygon_id = paste(line_id, id, sep = "-")
+    ) |>
+    sfheaders::sf_polygon(
+      x = "x",
+      y = "y",
+      polygon_id = "polygon_id",
+      keep = T
+    ) |>
+    dplyr::select(-polygon_id) |>
+    dplyr::group_by(
+      line_id, prob
+    ) |>
     dplyr::summarise() ->
     iso_poly_st
 
