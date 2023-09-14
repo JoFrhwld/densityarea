@@ -128,12 +128,12 @@ density_area <- function(x,
     iso_poly_st
 
   iso_poly_st |>
-    map(\(x) x |>
+    purrr::map(\(x) x |>
           dplyr::mutate(area = sf::st_area(geometry))) -> area_poly
 
   if (drop_geometry) {
     area_poly |>
-      map(\(x) x |> sf::st_drop_geometry()) ->
+      purrr::map(\(x) x |> sf::st_drop_geometry()) ->
       area_poly
   }
 
