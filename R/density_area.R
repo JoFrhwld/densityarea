@@ -66,22 +66,22 @@ density_polygons <- function(x,
       sep = ":",
       convert = T
     ) |>
-    mutate(
+    dplyr::mutate(
       band_id = start |>
-        desc() |>
+        dplyr::desc() |>
         as.factor() |>
         as.numeric(),
       prob = sort(probs)[band_id],
-      order = row_number()
+      order = dplyr::row_number()
     ) |>
-    select(-start,-end) |>
-    select(band_id,
+    dplyr::select(-start,-end) |>
+    dplyr::select(band_id,
            id,
            prob,
            x,
            y,
            order) |>
-    rename(any_of(nameswap)) ->
+    dplyr::rename(any_of(nameswap)) ->
     iso_poly_df
 
   if (!as_sf & as_list) {
