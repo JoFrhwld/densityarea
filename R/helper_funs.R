@@ -14,12 +14,11 @@ isoband_z_matrix <- function(data) {
   raster
 }
 
-xyz_to_isobands <- function(data, breaks) {
-  isoband::isobands(
+xyz_to_isolines <- function(data, breaks) {
+  isoband::isolines(
     x = sort(unique(data$x)),
     y = sort(unique(data$y)),
     z = isoband_z_matrix(data),
-    levels_low = breaks[-length(breaks)],
-    levels_high = breaks[-1]
+    levels = breaks[-length(breaks)]
   )
 }
