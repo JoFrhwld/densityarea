@@ -69,3 +69,11 @@ usethis::use_data_raw("s01")
 # Documentation ----
 
 usethis::use_vignette(name = "usage", title = "Using densityarea")
+
+
+# Tests ----
+
+usethis::use_testthat(3)
+usethis::use_test("list_return")
+
+
