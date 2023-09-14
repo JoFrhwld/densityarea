@@ -75,5 +75,5 @@ usethis::use_vignette(name = "usage", title = "Using densityarea")
 
 usethis::use_testthat(3)
 usethis::use_test("list_return")
-
-
+usethis::use_test("sf_return")
+usethis::use_test("multi_polygon")
