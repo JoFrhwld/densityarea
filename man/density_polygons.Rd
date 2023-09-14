@@ -4,8 +4,11 @@
 \alias{density_polygons}
 \title{Density polygons}
 \usage{
-density_polygons(x, y, probs = 0.5, as_st = FALSE, ...)
+density_polygons(x, y, probs = 0.5, as_sf = FALSE, as_list = TRUE, ...)
+}
+\arguments{
+\item{...}{}
 }
 \description{
-Density polygons
+
 }
