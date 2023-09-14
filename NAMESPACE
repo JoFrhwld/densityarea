@@ -2,4 +2,4 @@
 
 export(density_area)
 export(density_polygons)
-export(get_isobands)
+export(get_isolines)
