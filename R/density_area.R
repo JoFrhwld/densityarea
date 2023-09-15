@@ -1,4 +1,3 @@
-#' expand_range
 expand_range <- function(x, mult = 0.25, ...){
   data_range <- range(x)
   range_diff <- diff(data_range)
@@ -6,14 +5,6 @@ expand_range <- function(x, mult = 0.25, ...){
   return(out_range)
 }
 
-#' get isobands
-#'
-#' @param x
-#' @param y
-#' @param probs
-#' @param ...
-#'
-#' @export
 get_isolines<- function(x,
                          y,
                          probs = 0.5,
@@ -66,7 +57,7 @@ get_isolines<- function(x,
 #' @returns A list of data frames, if `as_list=TRUE`, or just a data frame,
 #' if `as_list=FALSE`
 #'
-#'
+#' @example inst/examples/density_polygon_example.R
 #'
 #' @export
 
@@ -136,6 +127,14 @@ density_polygons <- function(x,
 
 
 #' Density Area
+#'
+#' @param x,y Numeric data dimensions
+#' @param probs Probabilities to compute density polygons for
+#' @param as_sf Should the returned values be [sf::sf]? Defaults to `FALSE`.
+#' @param as_list Should the returned value be a list? Defaults to `TRUE` to
+#' work well with tidyverse list columns
+#' @param ... Additional arguments to be passed to [ggdensity::get_hdr()]
+#'
 #' @export
 
 density_area <- function(x,
@@ -149,24 +148,27 @@ density_area <- function(x,
     y = y,
     probs = probs,
     as_sf = T,
-    as_list = T,
+    as_list = F,
     ...
   ) ->
-    iso_poly_st
+    iso_poly_sf
 
-  iso_poly_st |>
-    purrr::map(\(x) x |>
-          dplyr::mutate(area = sf::st_area(geometry))) -> area_poly
+  iso_poly_sf |>
+    sf::st_sf() |>
+    dplyr::mutate(
+      area = sf::st_area(geometry)
+    ) ->
+    area_poly
 
   if (!as_sf) {
     area_poly |>
-      purrr::map(\(x) x |> sf::st_drop_geometry()) ->
+      sf::st_drop_geometry() ->
       area_poly
   }
 
-  if (!as_list) {
-    area_poly <- area_poly |>
-      purrr::list_rbind()
+  if (as_list) {
+    area_poly <- list(area_poly)
+
   }
 
   return(area_poly)
