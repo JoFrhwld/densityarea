@@ -6,6 +6,18 @@
 \usage{
 density_area(x, y, probs = 0.5, as_sf = F, as_list = T, ...)
 }
+\arguments{
+\item{x, y}{Numeric data dimensions}
+
+\item{probs}{Probabilities to compute density polygons for}
+
+\item{as_sf}{Should the returned values be \link[sf:sf]{sf::sf}? Defaults to \code{FALSE}.}
+
+\item{as_list}{Should the returned value be a list? Defaults to \code{TRUE} to
+work well with tidyverse list columns}
+
+\item{...}{Additional arguments to be passed to \code{\link[ggdensity:get_hdr]{ggdensity::get_hdr()}}}
+}
 \description{
 Density Area
 }
