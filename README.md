@@ -3,6 +3,11 @@
 
 # densityarea
 
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/JoFrhwld/densityarea/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/JoFrhwld/densityarea/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
 The package `{ggdensity}`[^1] allows for plotting interpretable
 bivariate densities by using highest density ranges (HDRs). For example:
 
@@ -11,6 +16,7 @@ library(tibble)
 library(ggplot2)
 library(ggdensity)
 
+set.seed(10)
 df <- tibble(
   x = c(rnorm(100), rnorm(100, mean = 3)),
   y = c(rnorm(100), rnorm(100, mean = 3))
