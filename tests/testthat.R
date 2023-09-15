@@ -8,5 +8,6 @@
 
 library(testthat)
 library(densityarea)
+library(sf)
 
 test_check("densityarea")
