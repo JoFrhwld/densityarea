@@ -2,4 +2,3 @@
 
 export(density_area)
 export(density_polygons)
-export(get_isolines)
