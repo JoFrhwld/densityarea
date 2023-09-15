@@ -1,3 +1,11 @@
+#' expand_range
+expand_range <- function(x, mult = 0.25, ...){
+  data_range <- range(x)
+  range_diff <- diff(data_range)
+  out_range <- ((range_diff * mult) * c(-1, 1)) + data_range
+  return(out_range)
+}
+
 #' get isobands
 #'
 #' @param x
@@ -9,10 +17,11 @@
 get_isolines<- function(x,
                          y,
                          probs = 0.5,
+                         range_mult = 0.25,
                          ...) {
+  rangex = expand_range(x, range_mult)
+  rangey = expand_range(y, range_mult)
 
-  rangex = ((range(x) * 0.25) * c(-1, 1)) + range(x)
-  rangey = ((range(y) * 0.5) * c(-1, 1)) + range(y)
   tibble::tibble(x = x,
                  y = y) |>
     ggdensity::get_hdr(probs = probs,
@@ -106,8 +115,8 @@ density_polygons <- function(x,
       polygon_id = paste(line_id, id, sep = "-")
     ) |>
     sfheaders::sf_polygon(
-      x = "x",
-      y = "y",
+      x = xname,
+      y = yname,
       polygon_id = "polygon_id",
       keep = T
     ) |>
