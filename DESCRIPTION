@@ -22,17 +22,17 @@ Imports:
     purrr,
     sf,
     sfheaders,
-    tibble,
-    tidyr
+    tibble
 Suggests: 
     forcats,
     ggplot2,
     knitr,
     readr,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    tidyr,
+    rlang
 VignetteBuilder: knitr
 Depends: 
-    R (>= 2.10),
-    rlang
+    R (>= 2.10)
 Config/testthat/edition: 3
