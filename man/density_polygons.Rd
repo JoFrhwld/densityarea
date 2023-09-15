@@ -32,6 +32,7 @@ When using \code{density_polygons()} together with tidyverse verbs, like
 \code{\link[dplyr:summarise]{dplyr::summarise()}}, \code{as_list} should be \code{TRUE}.
 }
 \examples{
+library(densityarea)
 library(ggplot2)
 library(dplyr)
 library(purrr)
