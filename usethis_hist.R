@@ -79,3 +79,7 @@ usethis::use_test("list_return")
 usethis::use_test("sf_return")
 usethis::use_test("multi_polygon")
 usethis::use_test("expand_range")
+
+
+# Github ----
+usethis::use_github_action(name = "check-standard")
