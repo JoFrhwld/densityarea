@@ -92,7 +92,7 @@ density_polygons <- function(x,
            x,
            y,
            order) |>
-    dplyr::rename(any_of(nameswap)) ->
+    dplyr::rename(dplyr::any_of(nameswap)) ->
     iso_poly_df
 
   if (!as_sf & as_list) {
@@ -128,12 +128,18 @@ density_polygons <- function(x,
 
 #' Density Area
 #'
+#' @description
+#' A convenience function to get just the areas of density polygons.
+#'
+#'
 #' @param x,y Numeric data dimensions
 #' @param probs Probabilities to compute density polygons for
 #' @param as_sf Should the returned values be [sf::sf]? Defaults to `FALSE`.
 #' @param as_list Should the returned value be a list? Defaults to `TRUE` to
 #' work well with tidyverse list columns
 #' @param ... Additional arguments to be passed to [ggdensity::get_hdr()]
+#'
+#' @example inst/examples/density_area_example.R
 #'
 #' @export
 
