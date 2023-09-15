@@ -1,0 +1,166 @@
+library(ggplot2)
+library(dplyr)
+library(purrr)
+library(tidyr)
+library(sf)
+
+set.seed(10)
+x <- c(rnorm(100))
+y <- c(rnorm(100))
+
+# ordinary data frame output
+poly_df <- density_polygons(x,
+                            y,
+                            probs = ppoints(5),
+                            as_list = FALSE)
+
+head(poly_df)
+
+# It's necessary to specify a grouping factor that combines `line_id` and `id`
+# for cases of multimodal density distributions
+ggplot(poly_df, aes(x, y)) +
+  geom_path(
+    aes(group = paste0(line_id, id),
+        color = prob)
+  )
+
+
+# sf output
+poly_sf <- density_polygons(x,
+                            y,
+                            probs = ppoints(5),
+                            as_sf = TRUE,
+                            as_list = FALSE)
+
+head(poly_sf)
+
+# `geom_sf()` is from the `{sf}` package.
+poly_sf |>
+  arrange(desc(prob)) |>
+  ggplot() +
+    geom_sf(aes(fill=prob))
+
+
+# Tidyverse usage
+
+data(s01)
+
+# Data transformation
+s01 <- s01 |>
+  mutate(
+    log_F1 = -log(F1),
+    log_F2 = -log(F2)
+  )
+
+# This data has only one group for `name`, but this is the general
+# approach to take for multiple groups
+s01 |>
+  group_by(name) |>
+  summarise(
+    poly_df = density_polygons(log_F2,
+                               log_F1,
+                               probs = ppoints(5),
+                               as_sf = FALSE,
+                               n = 200),
+    poly_sf = density_polygons(log_F2,
+                               log_F1,
+                               probs = ppoints(5),
+                               as_sf = TRUE,
+                               n = 200)
+  )->
+  speaker_polys
+
+# The list columns will need to be unnested for additional analysis/plotting
+speaker_polys
+
+# plotting the data frame output
+speaker_polys |>
+  unnest(poly_df) |>
+  ggplot(
+    aes(log_F2, log_F1)
+  )+
+    geom_path(
+      aes(group = paste0(line_id, id),
+          color = prob)
+    )+
+    coord_fixed()
+
+# plotting the sf output
+speaker_polys |>
+  unnest(poly_sf) |>
+  st_sf() |>
+  arrange(desc(prob)) |>
+  ggplot()+
+    geom_sf(aes(fill = prob))
+
+# Using additional sf capabilities to explore category overlap
+
+## focusing on two categories
+s01 |>
+  filter(plt_vclass %in% c("o", "oh"))->
+  s01_lowback
+
+## raw data
+s01_lowback |>
+  ggplot(
+    aes(log_F2,
+        log_F1)
+  )+
+    geom_point(
+      aes(color = plt_vclass)
+    )+
+    coord_fixed()
+
+## Getting the sf polygons of the categories at 80%
+s01_lowback |>
+  group_by(plt_vclass) |>
+  summarise(
+    poly_sf = density_polygons(log_F2,
+                               log_F1,
+                               probs = 0.8,
+                               as_sf = TRUE)
+  ) |>
+  unnest(poly_sf) |>
+  st_sf() ->
+  lowback_sf
+
+## The basic polygons
+lowback_sf |>
+  ggplot()+
+    geom_sf(
+      aes(fill = plt_vclass),
+      alpha = 0.6
+    )
+
+## `sf::st_intersection()` will generate unique polygons for intersections
+lowback_sf |>
+  st_intersection() |>
+  # recoding overlapping areas
+  mutate(
+    plt_vclass = case_when(
+      n.overlaps > 1 ~ "o~oh",
+      .default = plt_vclass
+    )
+  ) ->
+  lowback_overlap
+
+## plotting the overlap
+lowback_overlap |>
+  ggplot() +
+    geom_sf(
+      aes(fill = plt_vclass)
+    )
+
+## plotting overlaping area proportions
+lowback_overlap |>
+  mutate(
+    area = st_area(geometry),
+    pop_area = area/sum(area)
+  ) |>
+  ggplot(
+    aes(plt_vclass, pop_area)
+  )+
+    geom_col(
+      aes(fill = plt_vclass)
+    )+
+    ylim(0,0.5)
