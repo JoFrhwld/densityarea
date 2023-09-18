@@ -83,3 +83,5 @@ usethis::use_test("expand_range")
 
 # Github ----
 usethis::use_github_action(name = "check-standard")
+usethis::use_pkgdown()
+usethis::use_pkgdown_github_pages()
