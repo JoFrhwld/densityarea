@@ -69,11 +69,14 @@ density_polygons <- function(x,
                              as_sf = FALSE,
                              as_list = TRUE,
                              ...) {
+
   xname <- deparse(substitute(x))
   yname <- deparse(substitute(y))
 
   nameswap <- c("x", "y")
-  names(nameswap) <- c(xname, yname)
+  names(nameswap) <- vctrs::vec_as_names(c(xname, yname),
+                                         repair = "unique",
+                                         quiet = TRUE)
 
   isolines <- get_isolines(x, y, probs, ...)
 

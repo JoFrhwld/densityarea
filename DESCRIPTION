@@ -22,7 +22,8 @@ Imports:
     purrr,
     sf,
     sfheaders,
-    tibble
+    tibble,
+    vctrs
 Suggests: 
     forcats,
     ggplot2,
