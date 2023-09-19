@@ -56,7 +56,7 @@ usethis::use_package("ggdensity")
 usethis::use_package("sf")
 usethis::use_package("tidyr")
 usethis::use_package("sfheaders")
-
+usethis::use_package("vctrs")
 
 ## suggests ----
 usethis::use_package("readr", type = "Suggests")
@@ -79,6 +79,7 @@ usethis::use_test("list_return")
 usethis::use_test("sf_return")
 usethis::use_test("multi_polygon")
 usethis::use_test("expand_range")
+usethis::use_test("test_rename")
 
 
 # Github ----
