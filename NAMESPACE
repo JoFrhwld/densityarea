@@ -2,3 +2,4 @@
 
 export(density_area)
 export(density_polygons)
+importFrom(dplyr,.data)

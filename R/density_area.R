@@ -59,6 +59,8 @@ get_isolines<- function(x,
 #'
 #' @example inst/examples/density_polygon_example.R
 #'
+#' @importFrom dplyr .data
+#'
 #' @export
 
 density_polygons <- function(x,
@@ -77,21 +79,21 @@ density_polygons <- function(x,
 
   isolines |>
     dplyr::mutate(
-      line_id = line |>
+      line_id = .data$line |>
         as.numeric() |>
         dplyr::desc() |>
         as.factor() |>
         as.numeric(),
-      prob = sort(probs)[line_id],
+      prob = sort(probs)[.data$line_id],
       order = dplyr::row_number()
     ) |>
-    dplyr::select(-line) |>
-    dplyr::select(line_id,
-           id,
-           prob,
-           x,
-           y,
-           order) |>
+    dplyr::select(-"line") |>
+    dplyr::select("line_id",
+           "id",
+           "prob",
+           "x",
+           "y",
+           "order") |>
     dplyr::rename(dplyr::any_of(nameswap)) ->
     iso_poly_df
 
@@ -103,7 +105,7 @@ density_polygons <- function(x,
 
   iso_poly_df |>
     dplyr::mutate(
-      polygon_id = paste(line_id, id, sep = "-")
+      polygon_id = paste(.data$line_id, .data$id, sep = "-")
     ) |>
     sfheaders::sf_polygon(
       x = xname,
@@ -111,9 +113,9 @@ density_polygons <- function(x,
       polygon_id = "polygon_id",
       keep = T
     ) |>
-    dplyr::select(-polygon_id) |>
+    dplyr::select(-"polygon_id") |>
     dplyr::group_by(
-      line_id, prob
+      .data$line_id, .data$prob
     ) |>
     dplyr::summarise() ->
     iso_poly_st
@@ -141,6 +143,8 @@ density_polygons <- function(x,
 #'
 #' @example inst/examples/density_area_example.R
 #'
+#' @importFrom dplyr .data
+#'
 #' @export
 
 density_area <- function(x,
@@ -162,7 +166,7 @@ density_area <- function(x,
   iso_poly_sf |>
     sf::st_sf() |>
     dplyr::mutate(
-      area = sf::st_area(geometry)
+      area = sf::st_area(.data$geometry)
     ) ->
     area_poly
 
