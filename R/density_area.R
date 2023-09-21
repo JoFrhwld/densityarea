@@ -60,6 +60,7 @@ get_isolines<- function(x,
 #' @example inst/examples/density_polygon_example.R
 #'
 #' @importFrom dplyr .data
+#' @import sf
 #'
 #' @export
 
