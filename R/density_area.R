@@ -117,6 +117,7 @@ density_polygons <- function(x,
       keep = T
     ) |>
     dplyr::select(-"polygon_id") |>
+    sf::st_sf() |>
     dplyr::group_by(
       .data$line_id, .data$prob
     ) |>
