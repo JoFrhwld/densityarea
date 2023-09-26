@@ -16,6 +16,7 @@ RoxygenNote: 7.2.3
 URL: https://github.com/JoFrhwld/densityarea, https://jofrhwld.github.io/densityarea/
 BugReports: https://github.com/JoFrhwld/densityarea/issues
 Imports: 
+    cli,
     dplyr,
     ggdensity,
     isoband,

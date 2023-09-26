@@ -34,6 +34,29 @@ get_isolines<- function(x,
   return(isolines_df)
 }
 
+get_isolines_safely <- function(...){
+
+  empty_iso <- tibble::tibble(line = NA_character_,
+                      x = NA_real_,
+                      y = NA_real_,
+                      id = NA_integer_)
+
+  purrr::safely(get_isolines,
+                otherwise = empty_iso,
+                quiet = TRUE)(...)->
+    iso_result
+
+  if(!is.null(iso_result$error)){
+    dots <- rlang::dots_list(...)
+    data_len <- length(dots$x)
+    cli::cli_warn(
+      c("There was a problem calculating probability isolines.",
+        "i" = "There {?was/were} {data_len} x,y pair{?s} in the input.")
+    )
+  }
+
+  return(iso_result$result)
+}
 
 #' Density polygons
 #'
@@ -79,7 +102,7 @@ density_polygons <- function(x,
                                          repair = "unique",
                                          quiet = TRUE)
 
-  isolines <- get_isolines(x, y, probs, ...)
+  isolines <- get_isolines_safely(x=x, y=y, probs=probs, ...)
 
   isolines |>
     dplyr::mutate(
@@ -107,23 +130,27 @@ density_polygons <- function(x,
     return(iso_poly_df)
   }
 
-  iso_poly_df |>
-    dplyr::mutate(
-      polygon_id = paste(.data$line_id, .data$id, sep = "-")
-    ) |>
-    sfheaders::sf_polygon(
-      x = xname,
-      y = yname,
-      polygon_id = "polygon_id",
-      keep = T
-    ) |>
-    dplyr::select(-"polygon_id") |>
-    sf::st_sf() |>
-    dplyr::group_by(
-      .data$line_id, .data$prob
-    ) |>
-    dplyr::summarise() ->
-    iso_poly_st
+  if(nrow(iso_poly_df) < 4){
+    iso_poly_st <- NULL
+  }else{
+    iso_poly_df |>
+      dplyr::mutate(
+        polygon_id = paste(.data$line_id, .data$id, sep = "-")
+      ) |>
+      sfheaders::sf_polygon(
+        x = xname,
+        y = yname,
+        polygon_id = "polygon_id",
+        keep = T
+      ) |>
+      dplyr::select(-"polygon_id") |>
+      sf::st_sf() |>
+      dplyr::group_by(
+        .data$line_id, .data$prob
+      ) |>
+      dplyr::summarise() ->
+      iso_poly_st
+  }
 
   if (as_list) {
     return(list(iso_poly_st))
@@ -168,23 +195,28 @@ density_area <- function(x,
   ) ->
     iso_poly_sf
 
-  iso_poly_sf |>
-    sf::st_sf() |>
-    dplyr::mutate(
-      area = sf::st_area(.data$geometry)
-    ) ->
-    area_poly
-
-  if (!as_sf) {
-    area_poly |>
-      sf::st_drop_geometry() ->
+  if(!is.null(iso_poly_sf)){
+    iso_poly_sf |>
+      sf::st_sf() |>
+      dplyr::mutate(
+        area = sf::st_area(.data$geometry)
+      ) ->
       area_poly
+
+    if (!as_sf) {
+      area_poly |>
+        sf::st_drop_geometry() ->
+        area_poly
+    }
+
+  }else{
+    area_poly <- NULL
   }
 
   if (as_list) {
     area_poly <- list(area_poly)
-
   }
 
   return(area_poly)
+
 }
