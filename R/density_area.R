@@ -35,10 +35,11 @@ get_isolines<- function(x,
 }
 
 get_isolines_safely <- function(...){
-  emtpy_iso <- tibble::tibble(line = character(),
-                      x = double(),
-                      y = double(),
-                      id = integer())
+
+  empty_iso <- tibble::tibble(line = NA_character_,
+                      x = NA_real_,
+                      y = NA_real_,
+                      id = NA_integer_)
 
   purrr::safely(get_isolines,
                 otherwise = empty_iso,
@@ -46,7 +47,13 @@ get_isolines_safely <- function(...){
     iso_result
 
   if(!is.null(iso_result$error)){
-    warning("There was a problem calculating probability isolines.")
+    dots <- rlang::dots_list(...)
+    data_len <- length(dots$x)
+    warning(
+      glue::glue(
+      "There was a problem calculating probability isolines.\nℹ There were {data_len} values in the input."
+      )
+    )
   }
 
   return(iso_result$result)
@@ -96,7 +103,7 @@ density_polygons <- function(x,
                                          repair = "unique",
                                          quiet = TRUE)
 
-  isolines <- get_isolines_safely(x, y, probs, ...)
+  isolines <- get_isolines_safely(x=x, y=y, probs=probs, ...)
 
   isolines |>
     dplyr::mutate(
