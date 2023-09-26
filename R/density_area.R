@@ -96,7 +96,7 @@ density_polygons <- function(x,
                                          repair = "unique",
                                          quiet = TRUE)
 
-  isolines <- get_isolines(x, y, probs, ...)
+  isolines <- get_isolines_safely(x, y, probs, ...)
 
   isolines |>
     dplyr::mutate(
@@ -124,23 +124,30 @@ density_polygons <- function(x,
     return(iso_poly_df)
   }
 
-  iso_poly_df |>
-    dplyr::mutate(
-      polygon_id = paste(.data$line_id, .data$id, sep = "-")
-    ) |>
-    sfheaders::sf_polygon(
-      x = xname,
-      y = yname,
-      polygon_id = "polygon_id",
-      keep = T
-    ) |>
-    dplyr::select(-"polygon_id") |>
-    sf::st_sf() |>
-    dplyr::group_by(
-      .data$line_id, .data$prob
-    ) |>
-    dplyr::summarise() ->
-    iso_poly_st
+  if(nrow(iso_poly_df) == 0){
+    iso_poly_df |>
+      mutate(geometry = st_sfc()) |>
+      st_sf() ->
+      iso_poly_st
+  }else{
+    iso_poly_df |>
+      dplyr::mutate(
+        polygon_id = paste(.data$line_id, .data$id, sep = "-")
+      ) |>
+      sfheaders::sf_polygon(
+        x = xname,
+        y = yname,
+        polygon_id = "polygon_id",
+        keep = T
+      ) |>
+      dplyr::select(-"polygon_id") |>
+      sf::st_sf() |>
+      dplyr::group_by(
+        .data$line_id, .data$prob
+      ) |>
+      dplyr::summarise() ->
+      iso_poly_st
+  }
 
   if (as_list) {
     return(list(iso_poly_st))
