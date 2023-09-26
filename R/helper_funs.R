@@ -22,3 +22,58 @@ xyz_to_isolines <- function(data, breaks) {
     levels = breaks[-length(breaks)]
   )
 }
+
+check_dim_class <- function(x, varname){
+  if(!is.numeric(x)){
+    cli::cli_abort(
+      c("All dimensions must be numeric",
+        "i" = "{.var {varname}} has class {.cls {class(x)}}.")
+    )
+  }
+}
+
+check_dim_size <- function(x, y, xname, yname){
+  if(length(x) != length(y)){
+    xlen = length(x)
+    ylen = length(y)
+    cli::cli_abort(
+      c("Data dimensions must have the same length",
+        "i" = "{.var {xname}} has {xlen} value{?s}.",
+        "i" = "{.var {yname}} has {ylen} value{?s}.")
+    )
+  }
+}
+
+check_probs <- function(probs) {
+  if (!is.numeric(probs)) {
+    cli::cli_abort(
+      c("{.var probs} must be numeric",
+        "i" = "{.var probs} has class {.cls {class(probs)}}")
+    )
+  }
+
+  if (!all(is.finite(probs))) {
+    non_finites <- unique(probs[which(!is.finite(probs))])
+    cli::cli_abort(
+      c("All {.var probs} must be finite.",
+        "i" = "{.var probs} included values of {.val {non_finites}}")
+    )
+  }
+
+  if (any(probs <= 0)) {
+    n_less <- sum(probs <= 0)
+    cli::cli_abort(
+      c("All {.var probs} must be greater than 0.",
+        "i" = "{.var probs} contained {n_less} value{?s} <= 0.")
+    )
+  }
+
+  if (any(probs >= 1)) {
+    n_greater <- sum(probs >= 1)
+    cli::cli_abort(
+      c("All {.var probs} must be less than 1.",
+        "i" = "{.var probs} contained {n_greater} value{?s} >= 1")
+    )
+  }
+}
+
