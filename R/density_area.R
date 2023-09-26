@@ -124,11 +124,8 @@ density_polygons <- function(x,
     return(iso_poly_df)
   }
 
-  if(nrow(iso_poly_df) == 0){
-    iso_poly_df |>
-      mutate(geometry = st_sfc()) |>
-      st_sf() ->
-      iso_poly_st
+  if(nrow(iso_poly_df) < 4){
+    iso_poly_st <- NULL
   }else{
     iso_poly_df |>
       dplyr::mutate(
@@ -192,23 +189,28 @@ density_area <- function(x,
   ) ->
     iso_poly_sf
 
-  iso_poly_sf |>
-    sf::st_sf() |>
-    dplyr::mutate(
-      area = sf::st_area(.data$geometry)
-    ) ->
-    area_poly
-
-  if (!as_sf) {
-    area_poly |>
-      sf::st_drop_geometry() ->
+  if(!is.null(iso_poly_sf)){
+    iso_poly_sf |>
+      sf::st_sf() |>
+      dplyr::mutate(
+        area = sf::st_area(.data$geometry)
+      ) ->
       area_poly
+
+    if (!as_sf) {
+      area_poly |>
+        sf::st_drop_geometry() ->
+        area_poly
+    }
+
+  }else{
+    area_poly <- NULL
   }
 
   if (as_list) {
     area_poly <- list(area_poly)
-
   }
 
   return(area_poly)
+
 }
