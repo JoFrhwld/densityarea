@@ -22,3 +22,30 @@ xyz_to_isolines <- function(data, breaks) {
     levels = breaks[-length(breaks)]
   )
 }
+
+na_filter <- function(...){
+
+  dots <- rlang::dots_list(...)
+  dots_name <- names(dots)
+
+  na_vec <- purrr::map(dots, is.na)
+
+  if(purrr::reduce(na_vec, any)){
+    na_loc <- purrr::reduce(na_vec, `|`)
+    new_values <- purrr::map(dots, \(x)x[!na_loc])
+    output <- list(
+      filtered = TRUE,
+      values = new_values,
+      total  = purrr::map(na_vec, sum)
+    )
+  }else{
+    output <- list(
+      filtered = FALSE,
+      values = dots,
+      total  = purrr::map(na_vec, sum)
+    )
+  }
+
+  return(output)
+
+}
