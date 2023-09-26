@@ -97,6 +97,12 @@ density_polygons <- function(x,
   xname <- deparse(substitute(x))
   yname <- deparse(substitute(y))
 
+
+  check_dim_class(x, xname)
+  check_dim_class(y, yname)
+  check_dim_size(x, y, xname, yname)
+  check_probs(probs)
+
   nameswap <- c("x", "y")
   names(nameswap) <- vctrs::vec_as_names(c(xname, yname),
                                          repair = "unique",
