@@ -34,6 +34,23 @@ get_isolines<- function(x,
   return(isolines_df)
 }
 
+get_isolines_safely <- function(...){
+  emtpy_iso <- tibble::tibble(line = character(),
+                      x = double(),
+                      y = double(),
+                      id = integer())
+
+  purrr::safely(get_isolines,
+                otherwise = empty_iso,
+                quiet = TRUE)(...)->
+    iso_result
+
+  if(!is.null(iso_result$error)){
+    warning("There was a problem calculating probability isolines.")
+  }
+
+  return(iso_result$result)
+}
 
 #' Density polygons
 #'
