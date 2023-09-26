@@ -49,10 +49,9 @@ get_isolines_safely <- function(...){
   if(!is.null(iso_result$error)){
     dots <- rlang::dots_list(...)
     data_len <- length(dots$x)
-    warning(
-      glue::glue(
-      "There was a problem calculating probability isolines.\nℹ There were {data_len} values in the input."
-      )
+    cli::cli_warn(
+      c("There was a problem calculating probability isolines.",
+        "i" = "There {?was/were} {data_len} x,y pair{?s} in the input.")
     )
   }
 

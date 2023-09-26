@@ -57,6 +57,7 @@ usethis::use_package("sf")
 usethis::use_package("tidyr")
 usethis::use_package("sfheaders")
 usethis::use_package("vctrs")
+usethis::use_package("cli")
 
 ## suggests ----
 usethis::use_package("readr", type = "Suggests")
