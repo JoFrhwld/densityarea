@@ -2,5 +2,6 @@
 
 export(density_area)
 export(density_polygons)
+import(rlang)
 import(sf)
 importFrom(dplyr,.data)

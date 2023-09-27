@@ -1,3 +1,4 @@
+#' @import rlang
 get_isolines<- function(x,
                          y,
                          probs = 0.5,
@@ -6,12 +7,16 @@ get_isolines<- function(x,
                          ...) {
 
   dots <- rlang::dots_list(...)
+  hdr_args <- rlang::fn_fmls(ggdensity::get_hdr)
+  use_args <- dots[names(dots) %in% names(hdr_args)]
+
   tibble::tibble(x = x,
                  y = y) |>
     ggdensity::get_hdr(probs = probs,
                        rangex = rangex,
                        rangey = rangey,
-                       ...) ->
+                       !!!use_args) |>
+    rlang::inject() ->
     density_estimate
 
   density_estimate$df_est$z <- density_estimate$df_est$fhat
@@ -51,6 +56,23 @@ get_isolines_safely <- function(...){
   return(iso_result$result)
 }
 
+
+sf_polygon_safely <- function(...){
+
+  purrr::safely(sfheaders::sf_polygon,
+                quiet = TRUE)(...)->
+    poly_result
+
+  if(!is.null(poly_result$error)){
+    cli::cli_warn(
+      c("There was a problem creating a polygon with {.fun sfheaders::sf_polygon}",
+        "i" = "Try examining the results of {.fun densityarea::density_polygons} with {.arg as_sf} set to {.val {FALSE}}.")
+    )
+    return(NULL)
+  }
+  return(poly_result$result)
+}
+
 isolines_to_df <- function(isolines, probs, nameswap){
   isolines |>
     dplyr::mutate(
@@ -88,12 +110,16 @@ iso_df_to_sf <- function(iso_poly_df, xname, yname){
     ) -> df_prepared
 
   df_prepared |>
-    sfheaders::sf_polygon(
+    sf_polygon_safely(
       x = xname,
       y = yname,
       polygon_id = "polygon_id",
       keep = T
     ) -> iso_poly_pieces
+
+  if(is.null(iso_poly_pieces)){
+    return(NULL)
+  }
 
   iso_poly_pieces |>
     dplyr::select(-"polygon_id") |>
