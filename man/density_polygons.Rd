@@ -4,7 +4,17 @@
 \alias{density_polygons}
 \title{Density polygons}
 \usage{
-density_polygons(x, y, probs = 0.5, as_sf = FALSE, as_list = TRUE, ...)
+density_polygons(
+  x,
+  y,
+  probs = 0.5,
+  as_sf = FALSE,
+  as_list = TRUE,
+  range_mult = 0.25,
+  rangex = NULL,
+  rangey = NULL,
+  ...
+)
 }
 \arguments{
 \item{x, y}{Numeric data dimensions}
@@ -15,6 +25,12 @@ density_polygons(x, y, probs = 0.5, as_sf = FALSE, as_list = TRUE, ...)
 
 \item{as_list}{Should the returned value be a list? Defaults to \code{TRUE} to
 work well with tidyverse list columns}
+
+\item{range_mult}{A multiplier to the range of \code{x} and \code{y} across which the
+probability density will be estimated.}
+
+\item{rangex, rangey}{Custom ranges across \code{x} and \code{y} ranges across which the
+probability density will be estimated.}
 
 \item{...}{Additional arguments to be passed to \code{\link[ggdensity:get_hdr]{ggdensity::get_hdr()}}}
 }
@@ -30,6 +46,10 @@ densities.
 \details{
 When using \code{density_polygons()} together with tidyverse verbs, like
 \code{\link[dplyr:summarise]{dplyr::summarise()}}, \code{as_list} should be \code{TRUE}.
+
+If both \code{rangex} and \code{rangey} are defined, \code{range_mult} will be disregarded.
+If only one or the other of \code{rangex} and \code{rangey} are defined, \code{range_mult}
+will be used to produce the range of the undefined one.
 }
 \examples{
 library(densityarea)
