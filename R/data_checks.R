@@ -23,14 +23,21 @@ check_dim_size <- function(x, y, xname, yname){
   }
 }
 
-# check the probabilities
-check_probs <- function(probs) {
-  if (!is.numeric(probs)) {
+# check for minumum argument size
+check_min_size <- function(x, varname, min_size = 1){
+  if(len(x) < min_size){
     cli::cli_abort(
-      c("{.var probs} must be numeric",
-        "i" = "{.var probs} has class {.cls {class(probs)}}")
+      c("{.var {varname}} must have at least {.val {min_size}} value{?s}.",
+        "i" = "{.var {varname}} has {.val {length(x)}} value{?s}")
     )
   }
+}
+
+# check the probabilities
+check_probs <- function(probs) {
+
+  check_dim_class(probs, "probs")
+  check_min_size(probs, "probs", min_size = 1)
 
   if (!all(is.finite(probs))) {
     non_finites <- unique(probs[which(!is.finite(probs))])
@@ -40,21 +47,16 @@ check_probs <- function(probs) {
     )
   }
 
-  if (any(probs <= 0)) {
+  if (any(probs <= 0 | probs >= 1)) {
     n_less <- sum(probs <= 0)
-    cli::cli_abort(
-      c("All {.var probs} must be greater than 0.",
-        "i" = "{.var probs} contained {n_less} value{?s} <= 0.")
-    )
-  }
-
-  if (any(probs >= 1)) {
     n_greater <- sum(probs >= 1)
     cli::cli_abort(
-      c("All {.var probs} must be less than 1.",
+      c("All {.var probs} must be greater than 0 and less than 1.",
+        "i" = "{.var probs} contained {n_less} value{?s} <= 0.",
         "i" = "{.var probs} contained {n_greater} value{?s} >= 1")
     )
   }
+
 }
 
 
