@@ -54,7 +54,17 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">density_area</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, probs <span class="op">=</span> <span class="fl">0.5</span>, as_sf <span class="op">=</span> <span class="cn">F</span>, as_list <span class="op">=</span> <span class="cn">T</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">density_area</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">y</span>,</span>
+<span>  probs <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  as_sf <span class="op">=</span> <span class="cn">F</span>,</span>
+<span>  as_list <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>  range_mult <span class="op">=</span> <span class="fl">0.25</span>,</span>
+<span>  rangex <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  rangey <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -76,10 +86,26 @@
 work well with tidyverse list columns</p></dd>
 
 
+<dt>range_mult</dt>
+<dd><p>A multiplier to the range of <code>x</code> and <code>y</code> across which the
+probability density will be estimated.</p></dd>
+
+
+<dt>rangex, rangey</dt>
+<dd><p>Custom ranges across <code>x</code> and <code>y</code> ranges across which the
+probability density will be estimated.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to be passed to <code><a href="https://jamesotto852.github.io/ggdensity/reference/get_hdr.html" class="external-link">ggdensity::get_hdr()</a></code></p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>If both <code>rangex</code> and <code>rangey</code> are defined, <code>range_mult</code> will be disregarded.
+If only one or the other of <code>rangex</code> and <code>rangey</code> are defined, <code>range_mult</code>
+will be used to produce the range of the undefined one.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
