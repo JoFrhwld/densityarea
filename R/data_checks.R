@@ -66,7 +66,7 @@ na_filter <- function(...){
   dots <- rlang::dots_list(...)
   dots_name <- names(dots)
 
-  na_vec <- purrr::map(dots, is.na)
+  na_vec <- purrr::map(dots, purrr::negate(is.finite))
 
   output <- list(
     filtered = FALSE,
