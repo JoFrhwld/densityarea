@@ -43,8 +43,6 @@ usethis::use_github()
 
 # Dependencies ----
 
-## depends ----
-usethis::use_package("rlang", type = "Depends")
 
 
 ## imports ----
@@ -58,6 +56,7 @@ usethis::use_package("tidyr")
 usethis::use_package("sfheaders")
 usethis::use_package("vctrs")
 usethis::use_package("cli")
+usethis::use_package("rlang")
 
 ## suggests ----
 usethis::use_package("readr", type = "Suggests")
