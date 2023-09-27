@@ -136,3 +136,72 @@ process_data <- function(x, xname, y, yname, probs){
   )
 
 }
+
+# process ranges
+
+expand_range <- function(x, mult = 0.25){
+  data_range <- range(x)
+  range_diff <- diff(data_range)
+  out_range <- ((range_diff * mult) * c(-1, 1)) + data_range
+  return(out_range)
+}
+
+process_ranges <- function(x, y, rangex, rangey, range_mult){
+  is_def <- c(!is.null(rangex), !is.null(rangey))
+  mult_def <- !is.null(range_mult)
+
+  if(xor(is_def[1], is_def[2])){
+    range_names = c("rangex", "rangey")
+    cli::cli_warn(
+      c("{.var {range_names[is_def]}} was defined but {.var {range_names[!is_def]}} was not.")
+    )
+  }
+
+  if(all(is_def) & mult_def){
+    cli::cli_warn(
+      c("{.var rangey}, {.var rangey}, and {.var range_mult} all defined.",
+        "i" = "{.var range_mult} will be disregarded.")
+    )
+  }
+
+  if(!all(is_def) & mult_def){
+    check_finite(range_mult, "range_mult")
+    check_max_size(range_mult, "range_mult", max_size = 1)
+    check_min_size(range_mult, "range_mult", min_size = 1)
+  }
+
+  if(!is.null(rangex)){
+    check_finite(rangex, "rangex")
+    check_min_size(rangex,"rangex", min_size = 2)
+    check_max_size(rangex, "rangex", max_size = 2)
+  }
+
+  if(!is.null(rangey)){
+    check_finite(rangey, "rangey")
+    check_min_size(rangey, "rangey", min_size = 2)
+    check_max_size(rangey, "rangey", max_size = 2)
+  }
+
+  if(!any(c(is_def, mult_def))){
+    cli::cli_abort(
+      c("None of {.var rangex}, {.var rangey}, or {.var range_mult} defined.",
+        "i" = "The range across dimensions for estimating the probability polygons must be defined.")
+    )
+  }
+
+  output <- list()
+  if(!is.null(rangex)){
+    output$rangex <- rangex
+  }else{
+    output$rangex <- expand_range(x, mult = range_mult)
+  }
+
+  if(!is.null(rangey)){
+    output$rangey <- rangey
+  }else{
+    output$rangey <- expand_range(y, mult = range_mult)
+  }
+
+  return(output)
+
+}
