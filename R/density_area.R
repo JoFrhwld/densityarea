@@ -97,33 +97,18 @@ density_polygons <- function(x,
   xname <- deparse(substitute(x))
   yname <- deparse(substitute(y))
 
+  processed_data <- process_data(x=x,
+                                 xname = xname,
+                                 y=y,
+                                 yname = yname,
+                                 probs)
 
-  check_dim_class(x, xname)
-  check_dim_class(y, yname)
-  check_dim_size(x, y, xname, yname)
-  check_probs(probs)
+  list2env(processed_data, envir = environment())
 
   nameswap <- c("x", "y")
   names(nameswap) <- vctrs::vec_as_names(c(xname, yname),
                                          repair = "unique",
                                          quiet = TRUE)
-
-  na_filtered <- na_filter(x = x, y = y)
-
-  if(na_filtered$filtered){
-    x = na_filtered$values$x
-    y = na_filtered$values$y
-
-    x_total <- na_filtered$total$x
-    y_total <- na_filtered$total$y
-    cli::cli_warn(
-      c("Missing values dropped",
-        "i" = "{x_total} missing value{?s} in {xname}",
-        "i" = "{y_total} missing value{?s} in {yname}"
-      )
-    )
-  }
-
 
   isolines <- get_isolines_safely(x=x, y=y, probs=probs, ...)
 

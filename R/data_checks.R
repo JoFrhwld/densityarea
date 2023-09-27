@@ -85,3 +85,39 @@ na_filter <- function(...){
   return(output)
 
 }
+
+
+process_data <- function(x, xname, y, yname, probs){
+
+  check_dim_class(x, xname)
+  check_dim_class(y, yname)
+  check_dim_size(x, y, xname, yname)
+  check_probs(probs)
+
+  na_filtered <- na_filter(x = x, y = y)
+
+  if(na_filtered$filtered){
+    x <- na_filtered$values$x
+    y <- na_filtered$values$y
+
+    x_total <- na_filtered$total$x
+    y_total <- na_filtered$total$y
+    cli::cli_warn(
+      c("Missing and non-finite values dropped",
+        "i" = "{x_total} missing or non-finite value{?s} in {xname}",
+        "i" = "{y_total} missing or non-finite value{?s} in {yname}"
+      )
+    )
+  }
+
+  return(
+    list(
+      x = x,
+      y = y,
+      probs = probs,
+      xname = xname,
+      yname = yname
+    )
+  )
+
+}
