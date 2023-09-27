@@ -51,6 +51,66 @@ get_isolines_safely <- function(...){
   return(iso_result$result)
 }
 
+isolines_to_df <- function(isolines, probs, nameswap){
+  isolines |>
+    dplyr::mutate(
+      line_id = .data$line |>
+        as.numeric() |>
+        dplyr::desc() |>
+        as.factor() |>
+        as.numeric(),
+      prob = sort(probs)[.data$line_id],
+      order = dplyr::row_number()
+    ) |>
+    dplyr::select(-"line") |>
+    dplyr::select("line_id",
+                  "id",
+                  "prob",
+                  "x",
+                  "y",
+                  "order") |>
+    dplyr::rename(dplyr::any_of(nameswap)) ->
+    iso_poly_df
+
+  return(iso_poly_df)
+
+}
+
+iso_df_to_sf <- function(iso_poly_df, xname, yname){
+
+  if(nrow(iso_poly_df) < 4){
+    return(NULL)
+  }
+
+  iso_poly_df |>
+    dplyr::mutate(
+      polygon_id = paste(.data$line_id, .data$id, sep = "-")
+    ) -> df_prepared
+
+  df_prepared |>
+    sfheaders::sf_polygon(
+      x = xname,
+      y = yname,
+      polygon_id = "polygon_id",
+      keep = T
+    ) -> iso_poly_pieces
+
+  iso_poly_pieces |>
+    dplyr::select(-"polygon_id") |>
+    sf::st_sf() ->
+    iso_poly_pieces_sf
+
+  iso_poly_pieces_sf |>
+    dplyr::group_by(
+      .data$line_id, .data$prob
+    ) |>
+    dplyr::summarise() ->
+    iso_poly_sf
+
+  return(iso_poly_sf)
+
+}
+
 #' Density polygons
 #'
 #' @description
@@ -138,26 +198,7 @@ density_polygons <- function(x,
                                   rangex = rangex,
                                   rangey = rangey,
                                   ...)
-
-  isolines |>
-    dplyr::mutate(
-      line_id = .data$line |>
-        as.numeric() |>
-        dplyr::desc() |>
-        as.factor() |>
-        as.numeric(),
-      prob = sort(probs)[.data$line_id],
-      order = dplyr::row_number()
-    ) |>
-    dplyr::select(-"line") |>
-    dplyr::select("line_id",
-           "id",
-           "prob",
-           "x",
-           "y",
-           "order") |>
-    dplyr::rename(dplyr::any_of(nameswap)) ->
-    iso_poly_df
+  iso_poly_df <- isolines_to_df(isolines, probs, nameswap)
 
   if (!as_sf & as_list) {
     return(list(iso_poly_df))
@@ -165,32 +206,12 @@ density_polygons <- function(x,
     return(iso_poly_df)
   }
 
-  if(nrow(iso_poly_df) < 4){
-    iso_poly_st <- NULL
-  }else{
-    iso_poly_df |>
-      dplyr::mutate(
-        polygon_id = paste(.data$line_id, .data$id, sep = "-")
-      ) |>
-      sfheaders::sf_polygon(
-        x = xname,
-        y = yname,
-        polygon_id = "polygon_id",
-        keep = T
-      ) |>
-      dplyr::select(-"polygon_id") |>
-      sf::st_sf() |>
-      dplyr::group_by(
-        .data$line_id, .data$prob
-      ) |>
-      dplyr::summarise() ->
-      iso_poly_st
-  }
+  iso_poly_sf <- iso_df_to_sf(iso_poly_df, xname, yname)
 
   if (as_list) {
-    return(list(iso_poly_st))
+    return(list(iso_poly_sf))
   } else{
-    return(iso_poly_st)
+    return(iso_poly_sf)
   }
 }
 
