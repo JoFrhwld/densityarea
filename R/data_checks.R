@@ -23,7 +23,7 @@ check_dim_size <- function(x, y, xname, yname){
   }
 }
 
-# check for minumum argument size
+# check for minimum argument size
 check_min_size <- function(x, varname, min_size = 1){
   if(length(x) < min_size){
     cli::cli_abort(
@@ -33,19 +33,34 @@ check_min_size <- function(x, varname, min_size = 1){
   }
 }
 
+# check for maximum argument size
+check_max_size <- function(x, varname, max_size = 1){
+  if(length(x) > max_size){
+    cli::cli_abort(
+      c("{.var {varname}} must have no more than {.val {max_size}} value{?s}.",
+        "i" = "{.var {varname}} has {.val {length(x)}} value{?s}")
+    )
+  }
+}
+
+# check finite
+
+check_finite <- function(x, varname){
+  if(!all(is.finite(x))){
+    non_finites <- unique(x[which(!is.finite(x))])
+    cli::cli_abort(
+      c("All values of {.var {varname}} must be finite.",
+        "i" = "{.var {varname}} included values of {.val {non_finites}}")
+    )
+  }
+}
+
 # check the probabilities
 check_probs <- function(probs) {
 
   check_dim_class(probs, "probs")
   check_min_size(probs, "probs", min_size = 1)
-
-  if (!all(is.finite(probs))) {
-    non_finites <- unique(probs[which(!is.finite(probs))])
-    cli::cli_abort(
-      c("All {.var probs} must be finite.",
-        "i" = "{.var probs} included values of {.val {non_finites}}")
-    )
-  }
+  check_finite(probs, "probs")
 
   if (any(probs <= 0 | probs >= 1)) {
     n_less <- sum(probs <= 0)
