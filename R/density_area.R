@@ -1,18 +1,11 @@
-expand_range <- function(x, mult = 0.25, ...){
-  data_range <- range(x)
-  range_diff <- diff(data_range)
-  out_range <- ((range_diff * mult) * c(-1, 1)) + data_range
-  return(out_range)
-}
-
 get_isolines<- function(x,
                          y,
                          probs = 0.5,
-                         range_mult = 0.25,
+                         rangex,
+                         rangey,
                          ...) {
-  rangex = expand_range(x, range_mult)
-  rangey = expand_range(y, range_mult)
 
+  dots <- rlang::dots_list(...)
   tibble::tibble(x = x,
                  y = y) |>
     ggdensity::get_hdr(probs = probs,
@@ -75,10 +68,20 @@ get_isolines_safely <- function(...){
 #' @param as_sf Should the returned values be [sf::sf]? Defaults to `FALSE`.
 #' @param as_list Should the returned value be a list? Defaults to `TRUE` to
 #' work well with tidyverse list columns
+#' @param range_mult A multiplier to the range of `x` and `y` across which the
+#' probability density will be estimated.
+#' @param rangex,rangey Custom ranges across `x` and `y` ranges across which the
+#' probability density will be estimated.
 #' @param ... Additional arguments to be passed to [ggdensity::get_hdr()]
 #'
 #' @returns A list of data frames, if `as_list=TRUE`, or just a data frame,
 #' if `as_list=FALSE`
+#'
+#' @details
+#' If both `rangex` and `rangey` are defined, `range_mult` will be disregarded.
+#' If only one or the other of `rangex` and `rangey` are defined, `range_mult`
+#' will be used to produce the range of the undefined one.
+#'
 #'
 #' @example inst/examples/density_polygon_example.R
 #'
@@ -92,10 +95,24 @@ density_polygons <- function(x,
                              probs = 0.5,
                              as_sf = FALSE,
                              as_list = TRUE,
+                             range_mult = 0.25,
+                             rangex = NULL,
+                             rangey = NULL,
                              ...) {
+
+  dots <- rlang::dots_list(...)
+
+  ### Capture variable names for name swap
 
   xname <- deparse(substitute(x))
   yname <- deparse(substitute(y))
+
+  nameswap <- c("x", "y")
+  names(nameswap) <- vctrs::vec_as_names(c(xname, yname),
+                                         repair = "unique",
+                                         quiet = TRUE)
+
+  ### process data
 
   processed_data <- process_data(x=x,
                                  xname = xname,
@@ -105,12 +122,22 @@ density_polygons <- function(x,
 
   list2env(processed_data, envir = environment())
 
-  nameswap <- c("x", "y")
-  names(nameswap) <- vctrs::vec_as_names(c(xname, yname),
-                                         repair = "unique",
-                                         quiet = TRUE)
+  ### process ranges
 
-  isolines <- get_isolines_safely(x=x, y=y, probs=probs, ...)
+  processed_ranges <- process_ranges(x = x,
+                                     y = y,
+                                     rangex = rangex,
+                                     rangey = rangey,
+                                     range_mult = range_mult)
+
+  list2env(processed_ranges, envir = environment())
+
+  isolines <- get_isolines_safely(x=x,
+                                  y=y,
+                                  probs=probs,
+                                  rangex = rangex,
+                                  rangey = rangey,
+                                  ...)
 
   isolines |>
     dplyr::mutate(
@@ -179,7 +206,16 @@ density_polygons <- function(x,
 #' @param as_sf Should the returned values be [sf::sf]? Defaults to `FALSE`.
 #' @param as_list Should the returned value be a list? Defaults to `TRUE` to
 #' work well with tidyverse list columns
+#' @param range_mult A multiplier to the range of `x` and `y` across which the
+#' probability density will be estimated.
+#' @param rangex,rangey Custom ranges across `x` and `y` ranges across which the
+#' probability density will be estimated.
 #' @param ... Additional arguments to be passed to [ggdensity::get_hdr()]
+#'
+#' @details
+#' If both `rangex` and `rangey` are defined, `range_mult` will be disregarded.
+#' If only one or the other of `rangex` and `rangey` are defined, `range_mult`
+#' will be used to produce the range of the undefined one.
 #'
 #' @example inst/examples/density_area_example.R
 #'
@@ -192,6 +228,9 @@ density_area <- function(x,
                          probs = 0.5,
                          as_sf = F,
                          as_list = T,
+                         range_mult = 0.25,
+                         rangex = NULL,
+                         rangey = NULL,
                          ...) {
   density_polygons(
     x = x,
@@ -199,6 +238,9 @@ density_area <- function(x,
     probs = probs,
     as_sf = T,
     as_list = F,
+    range_mult = range_mult,
+    rangex = rangex,
+    rangey = rangey,
     ...
   ) ->
     iso_poly_sf
