@@ -1,3 +1,4 @@
+#' @import rlang
 get_isolines<- function(x,
                          y,
                          probs = 0.5,
@@ -6,12 +7,16 @@ get_isolines<- function(x,
                          ...) {
 
   dots <- rlang::dots_list(...)
+  hdr_args <- rlang::fn_fmls(ggdensity::get_hdr)
+  use_args <- dots[names(dots) %in% names(hdr_args)]
+
   tibble::tibble(x = x,
                  y = y) |>
     ggdensity::get_hdr(probs = probs,
                        rangex = rangex,
                        rangey = rangey,
-                       ...) ->
+                       !!!use_args) |>
+    rlang::inject() ->
     density_estimate
 
   density_estimate$df_est$z <- density_estimate$df_est$fhat
