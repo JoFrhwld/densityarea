@@ -25,7 +25,7 @@ check_dim_size <- function(x, y, xname, yname){
 
 # check for minumum argument size
 check_min_size <- function(x, varname, min_size = 1){
-  if(len(x) < min_size){
+  if(length(x) < min_size){
     cli::cli_abort(
       c("{.var {varname}} must have at least {.val {min_size}} value{?s}.",
         "i" = "{.var {varname}} has {.val {length(x)}} value{?s}")
