@@ -68,20 +68,18 @@ na_filter <- function(...){
 
   na_vec <- purrr::map(dots, is.na)
 
+  output <- list(
+    filtered = FALSE,
+    values = dots,
+    total  = purrr::map(na_vec, sum)
+  )
+
+
   if(purrr::reduce(na_vec, any)){
     na_loc <- purrr::reduce(na_vec, `|`)
     new_values <- purrr::map(dots, \(x)x[!na_loc])
-    output <- list(
-      filtered = TRUE,
-      values = new_values,
-      total  = purrr::map(na_vec, sum)
-    )
-  }else{
-    output <- list(
-      filtered = FALSE,
-      values = dots,
-      total  = purrr::map(na_vec, sum)
-    )
+    output$filtered <- TRUE
+    output$values <- new_values
   }
 
   return(output)
