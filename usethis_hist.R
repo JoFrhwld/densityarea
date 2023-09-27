@@ -82,6 +82,8 @@ usethis::use_test("multi_polygon")
 usethis::use_test("expand_range")
 usethis::use_test("test_rename")
 
+usethis::use_test("test_range")
+
 
 # Github ----
 usethis::use_github_action(name = "check-standard")
