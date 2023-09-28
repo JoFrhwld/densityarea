@@ -25,7 +25,7 @@
 #' Amogh Gulati, Coles, A., Veaux, C., Eren, E., Mishra, H., Paweł Potrykus,
 #' Jung, S., Sereda, T., Mestrou, T., Michaelasocolof, & Vannawillerton. (2022).
 #' MontrealCorpusTools/Montreal-Forced-Aligner: Version 2.0.1 (v2.0.1)
-#' [https://doi.org/10.5281/ZENODO.6658586](https://doi.org/10.5281/ZENODO.6658586)
+#' \doi{10.5281/ZENODO.6658586}
 
 #'
 #' @source Pitt, M. A., Dilley, L., Johnson, K., Kiesling, S., Raymond, W.,
