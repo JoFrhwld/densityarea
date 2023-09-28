@@ -1,8 +1,11 @@
 ## R CMD check results
 
-0 errors | 0 warnings | 2 notes
+0 errors | 0 warnings | 1 note
 
 * This is a new release.
+
+## Included data license information
+
 * `s01.txt` is "supplemental annotation" of Buckeye Corpus content. The relevant
 section of the Buckeye Corpus License reads:
 
