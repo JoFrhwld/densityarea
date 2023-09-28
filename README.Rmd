@@ -50,7 +50,12 @@ ggplot(df, aes(x,y))+
 
 ## Installation
 
-You can install the development version of `{densityarea}` from [GitHub](https://github.com/) with:
+You can install the development version of `{densityarea}` from CRAN with:
+```r
+install.packages("densityarea")
+```
+
+Or you can install the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")

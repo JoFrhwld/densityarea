@@ -34,7 +34,14 @@ analysis.
 
 ## Installation
 
-You can install the development version of `{densityarea}` from
+You can install the development version of `{densityarea}` from CRAN
+with:
+
+``` r
+install.packages("densityarea")
+```
+
+Or you can install the development version from
 [GitHub](https://github.com/) with:
 
 ``` r
