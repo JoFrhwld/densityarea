@@ -105,5 +105,5 @@ information on using spatial polygons, see `vignette("sf-operations")`.
 
 [^1]: Otto J, Kahle D (2023). *ggdensity: Interpretable Bivariate
     Density Visualization with ‘ggplot2’*.
-    <https://jamesotto852.github.io/ggdensity/,>
-    <https://github.com/jamesotto852/ggdensity/.>
+    <https://jamesotto852.github.io/ggdensity/>
+    <https://github.com/jamesotto852/ggdensity/>

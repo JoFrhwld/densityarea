@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
 
 The package `{ggdensity}`[^1] allows for plotting interpretable bivariate densities by using highest density ranges (HDRs). For example:
 
-[^1]: Otto J, Kahle D (2023). *ggdensity: Interpretable Bivariate Density Visualization with 'ggplot2'*. <https://jamesotto852.github.io/ggdensity/,> <https://github.com/jamesotto852/ggdensity/.>
+[^1]: Otto J, Kahle D (2023). *ggdensity: Interpretable Bivariate Density Visualization with 'ggplot2'*. <https://jamesotto852.github.io/ggdensity/> <https://github.com/jamesotto852/ggdensity/>
 
 ```{r}
 #| fig-width: 4
