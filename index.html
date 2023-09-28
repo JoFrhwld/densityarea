@@ -126,198 +126,34 @@
 <span><span class="co"># initial data processing</span></span>
 <span></span>
 <span><span class="va">s01</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>token <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/row_number.html" class="external-link">row_number</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span><span class="va">F1</span><span class="op">:</span><span class="va">F2</span>,</span>
-<span>               names_to <span class="op">=</span> <span class="st">"formant"</span>,</span>
-<span>               values_to <span class="op">=</span> <span class="st">"hz"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>log_hz_c <span class="op">=</span> <span class="op">-</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">hz</span><span class="op">)</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">hz</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">hz</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="external-link">pivot_wider</a></span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">formant</span>,</span>
-<span>              values_from <span class="op">=</span> <span class="va">log_hz_c</span><span class="op">)</span><span class="op">-&gt;</span></span>
-<span>  <span class="va">s01_norm</span></span></code></pre></div>
-<div class="section level3">
-<h3 id="raw-data">Raw Data<a class="anchor" aria-label="anchor" href="#raw-data"></a>
-</h3>
-<p>Here’s the raw vowel space data from one speaker with a 90% HDR plotted over it.</p>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>lF1 <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">F1</span><span class="op">)</span>,</span>
+<span>         lF2 <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">F2</span><span class="op">)</span><span class="op">)</span><span class="op">-&gt;</span></span>
+<span>  <span class="va">s01</span></span></code></pre></div>
+<p>To get this speaker’s vowel space area we can pass the data through <code><a href="https://dplyr.tidyverse.org/reference/reframe.html" class="external-link">dplyr::reframe()</a></code></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">s01_norm</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">F2</span>, y <span class="op">=</span> <span class="va">F1</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://jamesotto852.github.io/ggdensity/reference/geom_hdr.html" class="external-link">stat_hdr</a></span><span class="op">(</span>probs <span class="op">=</span> <span class="fl">0.9</span>, </span>
-<span>             alpha <span class="op">=</span> <span class="fl">0.5</span>,</span>
-<span>             fill <span class="op">=</span> <span class="st">"steelblue"</span>,</span>
-<span>             color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"stat_hdr()"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-4-1.png" width="50%" style="display: block; margin: auto;"></p>
-</div>
-<div class="section level3">
-<h3 id="hdr-polygons">HDR Polygons<a class="anchor" aria-label="anchor" href="#hdr-polygons"></a>
-</h3>
-<div class="section level4">
-<h4 id="hdr-polygon-in-a-data-frame">HDR polygon in a data frame.<a class="anchor" aria-label="anchor" href="#hdr-polygon-in-a-data-frame"></a>
-</h4>
-<p>To get the 90% HDR polygon as a simple data frame, we can use <code><a href="reference/density_polygons.html">densityarea::density_polygons()</a></code>. Even though this is just one speaker, we’ll still <code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by()</a></code> the speaker ID for the sake of generalizing to multi-speaker data.</p>
+<code class="sourceCode R"><span><span class="va">s01</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reframe.html" class="external-link">reframe</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="reference/density_area.html">density_area</a></span><span class="op">(</span><span class="va">lF2</span>, <span class="va">lF1</span>, probs <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 1 × 3</span></span>
+<span><span class="co">#&gt;   level_id  prob  area</span></span>
+<span><span class="co">#&gt;      &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1        1   0.8 0.406</span></span></code></pre></div>
+<p>Or, we could get the spatial polygon associated with the 80% probability level</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">s01_norm</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
-<span>    poly_df <span class="op">=</span> <span class="fu"><a href="reference/density_polygons.html">density_polygons</a></span><span class="op">(</span><span class="va">F2</span>, <span class="va">F1</span>, probs <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">poly_df</span><span class="op">)</span><span class="op">-&gt;</span></span>
-<span>  <span class="va">s01_poly_df</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">s01_poly_df</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">F2</span>, <span class="va">F1</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_polygon.html" class="external-link">geom_polygon</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"steelblue"</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"HDR polygon dataframe"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-6-1.png" width="50%" style="display: block; margin: auto;"></p>
+<code class="sourceCode R"><span><span class="va">s01</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reframe.html" class="external-link">reframe</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="reference/density_polygons.html">density_polygons</a></span><span class="op">(</span><span class="va">lF2</span>, <span class="va">lF1</span>, probs <span class="op">=</span> <span class="fl">0.8</span>, as_sf <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 1 × 3</span></span>
+<span><span class="co">#&gt;   level_id  prob                                                        geometry</span></span>
+<span><span class="co">#&gt;      &lt;int&gt; &lt;dbl&gt;                                                       &lt;POLYGON&gt;</span></span>
+<span><span class="co">#&gt; 1        1   0.8 ((-7.777586 -6.009484, -7.801131 -6.010429, -7.824676 -6.01700…</span></span></code></pre></div>
 </div>
-<div class="section level4">
-<h4 id="hdr-polygon-as-an-sf-polygon">HDR polygon as an sf polygon<a class="anchor" aria-label="anchor" href="#hdr-polygon-as-an-sf-polygon"></a>
-</h4>
-<p>We can also get the <code>sf</code> polygon objects by setting <code>as_sf=TRUE</code></p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">s01_norm</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
-<span>    poly_sf <span class="op">=</span> <span class="fu"><a href="reference/density_polygons.html">density_polygons</a></span><span class="op">(</span><span class="va">F2</span>, <span class="va">F1</span>, probs <span class="op">=</span> <span class="fl">0.9</span>, as_sf <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">poly_sf</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">st_sf</a></span><span class="op">(</span><span class="op">)</span><span class="op">-&gt;</span></span>
-<span>  <span class="va">s01_poly_sf</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">s01_poly_sf</span><span class="op">)</span><span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"steelblue"</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span><span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"HDR sf"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-8-1.png" width="50%" style="display: block; margin: auto;"></p>
-</div>
-<div class="section level4">
-<h4 id="multiple-probability-levels">Multiple probability levels<a class="anchor" aria-label="anchor" href="#multiple-probability-levels"></a>
-</h4>
-<p>You can get multiple probability levels at once by passing a vector of probabilities to <code>probs</code>. The base R function <code><a href="https://rdrr.io/r/stats/ppoints.html" class="external-link">ppoints()</a></code> will generate an evenly spaced number of probabilities.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">s01_norm</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
-<span>    poly_sf <span class="op">=</span> <span class="fu"><a href="reference/density_polygons.html">density_polygons</a></span><span class="op">(</span><span class="va">F2</span>, <span class="va">F1</span>, probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/ppoints.html" class="external-link">ppoints</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>, as_sf <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">poly_sf</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">st_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">prob</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">prob</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Multiple HDRs"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-9-1.png" width="50%" style="display: block; margin: auto;"></p>
-</div>
-</div>
-<div class="section level3">
-<h3 id="density-areas">Density Areas<a class="anchor" aria-label="anchor" href="#density-areas"></a>
-</h3>
-<p>With a few <a href="https://r-spatial.github.io/sf/" class="external-link">sf</a> functions, you can get the area of each density polygon, but there’s also a convenience function in <a href="https://github.com/JoFrhwld/densityarea" class="external-link">densityarea</a>, <code><a href="reference/density_area.html">density_area()</a></code>, that will also do this. It works the same way as <code><a href="reference/density_polygons.html">density_polygons()</a></code>.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">s01_norm</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
-<span>    areas_df <span class="op">=</span> <span class="fu"><a href="reference/density_area.html">density_area</a></span><span class="op">(</span><span class="va">F2</span>, <span class="va">F1</span>, probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/ppoints.html" class="external-link">ppoints</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">areas_df</span><span class="op">)</span><span class="op">-&gt;</span></span>
-<span>  <span class="va">s01_area</span></span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">s01_area</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">prob</span>, <span class="va">area</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"probability level vs HDR area"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-11-1.png" width="50%" style="display: block; margin: auto;"></p>
-<p>You can also preserve the sf polygons in the output.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">s01_norm</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
-<span>    areas_sf <span class="op">=</span> <span class="fu"><a href="reference/density_area.html">density_area</a></span><span class="op">(</span><span class="va">F2</span>, <span class="va">F1</span>, probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/ppoints.html" class="external-link">ppoints</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>, as_sf <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">areas_sf</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">st_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-&gt;</span></span>
-<span>  <span class="va">s01_area_sf</span></span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">s01_area_sf</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">prob</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">area</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"sf polygons' areas"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-13-1.png" width="50%" style="display: block; margin: auto;"></p>
-</div>
-<div class="section level3">
-<h3 id="leveraging-sf">Leveraging <code>{sf}</code>
-<a class="anchor" aria-label="anchor" href="#leveraging-sf"></a>
-</h3>
-<p>The <a href="https://r-spatial.github.io/sf/" class="external-link">sf</a> package has a lot of operations of potential use for analyzing these distributions. For example, we can calculate how much area two categories overlap in.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">s01_norm</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">plt_vclass</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"o"</span>, <span class="st">"oh"</span><span class="op">)</span><span class="op">)</span> <span class="op">-&gt;</span></span>
-<span>  <span class="va">s01_lowback</span></span></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">s01_lowback</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">F2</span>, <span class="va">F1</span>, color <span class="op">=</span> <span class="va">plt_vclass</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://jamesotto852.github.io/ggdensity/reference/geom_hdr.html" class="external-link">stat_hdr</a></span><span class="op">(</span>probs <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_color_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Dark2"</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"overlap visualization with stat_hdr()"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-15-1.png" width="50%" style="display: block; margin: auto;"></p>
-<p>We can get the sf polygons with <code><a href="reference/density_polygons.html">density_polygons()</a></code>.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">s01_lowback</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">plt_vclass</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
-<span>    poly_sf <span class="op">=</span> <span class="fu"><a href="reference/density_polygons.html">density_polygons</a></span><span class="op">(</span><span class="va">F2</span>, <span class="va">F1</span>, probs <span class="op">=</span> <span class="fl">0.9</span>, as_sf <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">poly_sf</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">st_sf</a></span><span class="op">(</span><span class="op">)</span><span class="op">-&gt;</span></span>
-<span>  <span class="va">s01_lowback_sf</span></span></code></pre></div>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">s01_lowback_sf</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span></span>
-<span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">plt_vclass</span><span class="op">)</span>,</span>
-<span>      alpha <span class="op">=</span> <span class="fl">0.6</span></span>
-<span>    <span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Dark2"</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"sf HDRs"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-17-1.png" width="50%" style="display: block; margin: auto;"></p>
-<p>Now, we can use <code><a href="https://r-spatial.github.io/sf/reference/geos_binary_ops.html" class="external-link">sf::st_intersection()</a></code> to get back the intersection of these two HDRs as a new polygon</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">s01_lowback_sf</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_binary_ops.html" class="external-link">st_intersection</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>    plt_vclass <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span><span class="va">n.overlaps</span> <span class="op">&gt;</span> <span class="fl">1</span> <span class="op">~</span> <span class="st">"o~oh"</span>,</span>
-<span>                           .default <span class="op">=</span> <span class="va">plt_vclass</span><span class="op">)</span></span>
-<span>  <span class="op">)</span><span class="op">-&gt;</span></span>
-<span>  <span class="va">s01_lowback_intersect</span></span></code></pre></div>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">s01_lowback_intersect</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span></span>
-<span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">plt_vclass</span><span class="op">)</span></span>
-<span>    <span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Dark2"</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"HDR intersections"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-19-1.png" width="50%" style="display: block; margin: auto;"></p>
-<p>And we can get the area of each unique region with <code><a href="https://r-spatial.github.io/sf/reference/geos_measures.html" class="external-link">sf::st_area()</a></code>.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">s01_lowback_intersect</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>area <span class="op">=</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_measures.html" class="external-link">st_area</a></span><span class="op">(</span><span class="va">geometry</span><span class="op">)</span>,</span>
-<span>         prop_area <span class="op">=</span> <span class="va">area</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">area</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">plt_vclass</span>, <span class="va">prop_area</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">plt_vclass</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Dark2"</span>,</span>
-<span>                      guide <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Proportional areas"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-20-1.png" width="60%" style="display: block; margin: auto;"></p>
-</div>
+<div class="section level2">
+<h2 id="for-more">For more<a class="anchor" aria-label="anchor" href="#for-more"></a>
+</h2>
+<p>For more details on using <a href="https://github.com/JoFrhwld/densityarea" class="external-link">densityarea</a>, see , and for further information on using spatial polygons, see <code><a href="articles/sf-operations.html">vignette("sf-operations")</a></code>.</p>
 </div>
 </div>
 

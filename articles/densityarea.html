@@ -158,15 +158,14 @@ density polygons with <code><a href="../reference/density_area.html">density_are
 <span>  <span class="op">)</span> <span class="op">-&gt;</span> </span>
 <span>  <span class="va">s01</span></span></code></pre></div>
 <p>To get the area within the 80% density polygon for the entire data
-set, we’ll pass <code>s01</code> through a
-<code><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">dplyr::summarise()</a></code> function.</p>
+set, we’ll pass <code>s01</code> through a <code><a href="https://dplyr.tidyverse.org/reference/reframe.html" class="external-link">dplyr::reframe()</a></code>
+function.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">s01</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
-<span>    area <span class="op">=</span> <span class="fu"><a href="../reference/density_area.html">density_area</a></span><span class="op">(</span><span class="va">lF2</span>, <span class="va">lF1</span>, probs <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">area</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reframe.html" class="external-link">reframe</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="../reference/density_area.html">density_area</a></span><span class="op">(</span><span class="va">lF2</span>, <span class="va">lF1</span>, probs <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> </span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 4</span></span></span>
 <span><span class="co">#&gt;   name  level_id  prob  area</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
@@ -177,17 +176,15 @@ for each <code>vowel</code>) we’d just change our
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">s01</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">name</span>, <span class="va">vowel</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
-<span>    area <span class="op">=</span> <span class="fu"><a href="../reference/density_area.html">density_area</a></span><span class="op">(</span><span class="va">lF2</span>, <span class="va">lF1</span>, probs <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">area</span><span class="op">)</span> <span class="op">-&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reframe.html" class="external-link">reframe</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="../reference/density_area.html">density_area</a></span><span class="op">(</span><span class="va">lF2</span>, <span class="va">lF1</span>, probs <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">-&gt;</span></span>
 <span>  <span class="va">vowel_areas</span></span></code></pre></div>
 <p>Let’s rearrange the order of rows to see the largest areas first.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vowel_areas</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">area</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 15 × 5</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># Groups:   name [1]</span></span></span>
 <span><span class="co">#&gt;    name  vowel level_id  prob   area</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> s01   AO           1   0.8 0.488 </span></span>
@@ -220,50 +217,13 @@ to return a data frame for just one probability level, 60%.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">s01</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
-<span>    polygons <span class="op">=</span> <span class="fu"><a href="../reference/density_polygons.html">density_polygons</a></span><span class="op">(</span><span class="va">lF2</span>, <span class="va">lF1</span>, probs <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reframe.html" class="external-link">reframe</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="../reference/density_polygons.html">density_polygons</a></span><span class="op">(</span><span class="va">lF2</span>, <span class="va">lF1</span>, probs <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span></span>
 <span>  <span class="op">)</span><span class="op">-&gt;</span></span>
 <span>  <span class="va">sixty_poly_df</span></span>
-<span><span class="co">#&gt; Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in</span></span>
-<span><span class="co">#&gt; dplyr 1.1.0.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `reframe()` instead.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> When switching from `summarise()` to `reframe()`, remember that `reframe()`</span></span>
-<span><span class="co">#&gt;   always returns an ungrouped data frame and adjust accordingly.</span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
-<p>The resulting summarized data frame has a column called
-<code>polygon</code>, which is a list column containing one data frame
-itself.<br></p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sixty_poly_df</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 99 × 2</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># Groups:   name [1]</span></span></span>
-<span><span class="co">#&gt;    name  polygons$level_id   $id $prob  $lF2  $lF1 $order</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> s01                   1     1   0.6 -<span style="color: #BB0000;">7.57</span> -<span style="color: #BB0000;">6.20</span>      1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> s01                   1     1   0.6 -<span style="color: #BB0000;">7.59</span> -<span style="color: #BB0000;">6.19</span>      2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> s01                   1     1   0.6 -<span style="color: #BB0000;">7.61</span> -<span style="color: #BB0000;">6.19</span>      3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> s01                   1     1   0.6 -<span style="color: #BB0000;">7.64</span> -<span style="color: #BB0000;">6.20</span>      4</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> s01                   1     1   0.6 -<span style="color: #BB0000;">7.65</span> -<span style="color: #BB0000;">6.20</span>      5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> s01                   1     1   0.6 -<span style="color: #BB0000;">7.66</span> -<span style="color: #BB0000;">6.21</span>      6</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> s01                   1     1   0.6 -<span style="color: #BB0000;">7.68</span> -<span style="color: #BB0000;">6.21</span>      7</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> s01                   1     1   0.6 -<span style="color: #BB0000;">7.71</span> -<span style="color: #BB0000;">6.21</span>      8</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> s01                   1     1   0.6 -<span style="color: #BB0000;">7.73</span> -<span style="color: #BB0000;">6.20</span>      9</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> s01                   1     1   0.6 -<span style="color: #BB0000;">7.75</span> -<span style="color: #BB0000;">6.20</span>     10</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 89 more rows</span></span></span></code></pre></div>
-<p>We can look directly at this data frame with some indexing:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sixty_poly_df</span><span class="op">$</span><span class="va">polygons</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 1 1 1 1 1 1</span></span></code></pre></div>
-<p>or, we can unpack it with <code><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">tidyr::unnest()</a></code>.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sixty_poly_df</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">polygons</span><span class="op">)</span><span class="op">-&gt;</span></span>
-<span>  <span class="va">sixty_poly_long_df</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sixty_poly_long_df</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sixty_poly_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 7</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># Groups:   name [1]</span></span></span>
 <span><span class="co">#&gt;   name  level_id    id  prob   lF2   lF1 order</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> s01          1     1   0.6 -<span style="color: #BB0000;">7.57</span> -<span style="color: #BB0000;">6.20</span>     1</span></span>
@@ -275,8 +235,8 @@ itself.<br></p>
 <p>Now, it’s <em>possible</em> for the HDR polygon to actually come in
 multiple pieces, but in this case, there’s just one polygon, so we can
 plot it.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">sixty_poly_long_df</span>,</span>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">sixty_poly_df</span>,</span>
 <span>       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">lF2</span>, <span class="va">lF1</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_polygon.html" class="external-link">geom_polygon</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">prob</span>,</span>
@@ -285,55 +245,35 @@ plot it.</p>
 <span>    linewidth <span class="op">=</span> <span class="fl">1</span></span>
 <span>  <span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="densityarea_files/figure-html/unnamed-chunk-12-1.png" width="80%" style="display: block; margin: auto;"></p>
+<p><img src="densityarea_files/figure-html/unnamed-chunk-8-1.png" width="80%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="multiple-probability-levels">Multiple probability levels<a class="anchor" aria-label="anchor" href="#multiple-probability-levels"></a>
 </h4>
 <p>To get polygons associated with multiple probability levels, we
 simply pass a vector of values to <code>probs</code>.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">s01</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
-<span>    polygons <span class="op">=</span> <span class="fu"><a href="../reference/density_polygons.html">density_polygons</a></span><span class="op">(</span><span class="va">lF2</span>, </span>
-<span>                                <span class="va">lF1</span>, </span>
-<span>                                probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">0.8</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reframe.html" class="external-link">reframe</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="../reference/density_polygons.html">density_polygons</a></span><span class="op">(</span><span class="va">lF2</span>, </span>
+<span>                     <span class="va">lF1</span>, </span>
+<span>                     probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">0.8</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">)</span><span class="op">-&gt;</span></span>
 <span>  <span class="va">multi_poly_df</span></span>
-<span><span class="co">#&gt; Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in</span></span>
-<span><span class="co">#&gt; dplyr 1.1.0.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `reframe()` instead.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> When switching from `summarise()` to `reframe()`, remember that `reframe()`</span></span>
-<span><span class="co">#&gt;   always returns an ungrouped data frame and adjust accordingly.</span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
-<p>The result is still a single row data frame with a list column.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">multi_poly_df</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 224 × 2</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># Groups:   name [1]</span></span></span>
-<span><span class="co">#&gt;    name  polygons$level_id   $id $prob  $lF2  $lF1 $order</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> s01                   2     1   0.8 -<span style="color: #BB0000;">7.80</span> -<span style="color: #BB0000;">6.01</span>      1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> s01                   2     1   0.8 -<span style="color: #BB0000;">7.82</span> -<span style="color: #BB0000;">6.02</span>      2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> s01                   2     1   0.8 -<span style="color: #BB0000;">7.85</span> -<span style="color: #BB0000;">6.02</span>      3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> s01                   2     1   0.8 -<span style="color: #BB0000;">7.87</span> -<span style="color: #BB0000;">6.02</span>      4</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> s01                   2     1   0.8 -<span style="color: #BB0000;">7.90</span> -<span style="color: #BB0000;">6.02</span>      5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> s01                   2     1   0.8 -<span style="color: #BB0000;">7.90</span> -<span style="color: #BB0000;">6.03</span>      6</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> s01                   2     1   0.8 -<span style="color: #BB0000;">7.92</span> -<span style="color: #BB0000;">6.06</span>      7</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> s01                   2     1   0.8 -<span style="color: #BB0000;">7.92</span> -<span style="color: #BB0000;">6.06</span>      8</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> s01                   2     1   0.8 -<span style="color: #BB0000;">7.92</span> -<span style="color: #BB0000;">6.09</span>      9</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> s01                   2     1   0.8 -<span style="color: #BB0000;">7.93</span> -<span style="color: #BB0000;">6.11</span>     10</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 214 more rows</span></span></span></code></pre></div>
-<p>But now if we unnest the <code>polygons</code> column, we’ll have
-access to both the 60% and the 80% polygons.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">multi_poly_df</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">polygons</span><span class="op">)</span><span class="op">-&gt;</span></span>
-<span>  <span class="va">multi_poly_long_df</span></span></code></pre></div>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">multi_poly_long_df</span>,</span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">multi_poly_df</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 7</span></span></span>
+<span><span class="co">#&gt;   name  level_id    id  prob   lF2   lF1 order</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> s01          2     1   0.8 -<span style="color: #BB0000;">7.80</span> -<span style="color: #BB0000;">6.01</span>     1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> s01          2     1   0.8 -<span style="color: #BB0000;">7.82</span> -<span style="color: #BB0000;">6.02</span>     2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> s01          2     1   0.8 -<span style="color: #BB0000;">7.85</span> -<span style="color: #BB0000;">6.02</span>     3</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> s01          2     1   0.8 -<span style="color: #BB0000;">7.87</span> -<span style="color: #BB0000;">6.02</span>     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> s01          2     1   0.8 -<span style="color: #BB0000;">7.90</span> -<span style="color: #BB0000;">6.02</span>     5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> s01          2     1   0.8 -<span style="color: #BB0000;">7.90</span> -<span style="color: #BB0000;">6.03</span>     6</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">multi_poly_df</span>,</span>
 <span>       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">lF2</span>, <span class="va">lF1</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_polygon.html" class="external-link">geom_polygon</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">prob</span>,</span>
@@ -342,7 +282,7 @@ access to both the 60% and the 80% polygons.</p>
 <span>    linewidth <span class="op">=</span> <span class="fl">1</span></span>
 <span>  <span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="densityarea_files/figure-html/unnamed-chunk-16-1.png" width="80%" style="display: block; margin: auto;"></p>
+<p><img src="densityarea_files/figure-html/unnamed-chunk-10-1.png" width="80%" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div class="section level3">
@@ -351,50 +291,38 @@ access to both the 60% and the 80% polygons.</p>
 <p>We can also get <code><a href="../reference/density_polygons.html">density_polygons()</a></code> to return the
 polygons as simple features, as defined in the <a href="https://r-spatial.github.io/sf/" class="external-link">sf</a>
 package, by passing it the argument <code>as_sf = TRUE</code>.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">s01</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
-<span>    polygons <span class="op">=</span> <span class="fu"><a href="../reference/density_polygons.html">density_polygons</a></span><span class="op">(</span><span class="va">lF2</span>,</span>
-<span>                                <span class="va">lF1</span>,</span>
-<span>                                probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.8</span>, <span class="fl">0.6</span><span class="op">)</span>,</span>
-<span>                                as_sf <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">-&gt;</span></span>
-<span>  <span class="va">multi_poly_sf</span></span>
-<span><span class="co">#&gt; Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in</span></span>
-<span><span class="co">#&gt; dplyr 1.1.0.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `reframe()` instead.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> When switching from `summarise()` to `reframe()`, remember that `reframe()`</span></span>
-<span><span class="co">#&gt;   always returns an ungrouped data frame and adjust accordingly.</span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span>
-<span></span>
-<span><span class="va">multi_poly_sf</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">polygons</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reframe.html" class="external-link">reframe</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="../reference/density_polygons.html">density_polygons</a></span><span class="op">(</span><span class="va">lF2</span>,</span>
+<span>                     <span class="va">lF1</span>,</span>
+<span>                     probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.8</span>, <span class="fl">0.6</span><span class="op">)</span>,</span>
+<span>                     as_sf <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">st_sf</a></span><span class="op">(</span><span class="op">)</span><span class="op">-&gt;</span></span>
-<span>  <span class="va">multi_poly_long_sf</span></span></code></pre></div>
+<span>  <span class="va">multi_poly_sf</span></span></code></pre></div>
 <p>The final function there, <code><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">sf::st_sf()</a></code>, wasn’t strictly
 necessary, but makes life a little easier for plotting. Here’s what the
 result looks like:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">multi_poly_long_sf</span></span>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">multi_poly_sf</span></span>
 <span><span class="co">#&gt; Simple feature collection with 2 features and 3 fields</span></span>
 <span><span class="co">#&gt; Geometry type: POLYGON</span></span>
 <span><span class="co">#&gt; Dimension:     XY</span></span>
 <span><span class="co">#&gt; Bounding box:  xmin: -7.93703 ymin: -6.913825 xmax: -7.208434 ymax: -6.009484</span></span>
 <span><span class="co">#&gt; CRS:           NA</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 4</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># Groups:   name [1]</span></span></span>
 <span><span class="co">#&gt;   name  level_id  prob                                                  geometry</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                                                 <span style="color: #949494; font-style: italic;">&lt;POLYGON&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> s01          1   0.6 ((-7.565679 -6.195695, -7.589224 -6.190341, -7.61277 -6.…</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> s01          2   0.8 ((-7.801131 -6.010429, -7.824676 -6.017003, -7.848222 -6…</span></span></code></pre></div>
 <p>And here’s a plot.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">multi_poly_long_sf</span><span class="op">)</span><span class="op">+</span></span>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">multi_poly_sf</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">prob</span><span class="op">)</span>,</span>
 <span>          fill <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></code></pre></div>
-<p><img src="densityarea_files/figure-html/unnamed-chunk-19-1.png" width="80%" style="display: block; margin: auto;"></p>
+<p><img src="densityarea_files/figure-html/unnamed-chunk-13-1.png" width="80%" style="display: block; margin: auto;"></p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
