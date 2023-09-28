@@ -16,10 +16,10 @@ poly_df <- density_polygons(x,
 
 head(poly_df)
 
-# It's necessary to specify a grouping factor that combines `line_id` and `id`
+# It's necessary to specify a grouping factor that combines `level_id` and `id`
 # for cases of multimodal density distributions
 ggplot(poly_df, aes(x, y)) +
-  geom_path(aes(group = paste0(line_id, id),
+  geom_path(aes(group = paste0(level_id, id),
                 color = prob))
 
 
