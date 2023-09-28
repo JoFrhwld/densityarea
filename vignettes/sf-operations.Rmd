@@ -198,7 +198,7 @@ vowel_intersections |>
     ylim(0,1)
 ```
 
-## Spatial filters and joins
+## Spatial filters
 
 There are also a number of spatial filters and merges that can be used interestingly if the original data points are also converted to sf objects.
 
@@ -276,9 +276,9 @@ covered_by_iy |>
     scale_fill_brewer(palette = "Dark2")
 ```
 
-### Spatial joins
+### Spatial join
 
-For a spatial join, let's see which vowel category a random vowel token is close to.
+Let's see which vowel category a random vowel token is close to.
 
 ```{r}
 set.seed(100)
@@ -292,14 +292,49 @@ rand_vowel
 Then, we'll get density polygons at a few different probability points for all vowels.
 
 ```{r}
-s01 |> 
-  group_by(plt_vclass) |> 
+s01 |>
+  group_by(plt_vclass) |>
   reframe(
     density_polygons(
-      lF1,
       lF2,
-      probs = ppoints(3),
+      lF1,
+      probs = ppoints(5),
+      range_mult = 0.5,
       as_sf = T
     )
-  )
+  ) |> 
+  st_sf() ->
+  vowel_probs
+```
+
+There are 5 probability level polygons for each vowel category in `vowel_probs`. We join the random vowel's data onto this set of polygons with `st_join()`.
+
+```{r}
+vowel_probs |> 
+  st_join(
+    rand_vowel,
+    .predicate = st_covers
+  ) |> 
+  drop_na()->
+  vowel_within
+```
+
+Now, for each vowel category in this new data frame, let's get the *smallest* probability polygon (i.e. where the random point is closest to the center probability mass).
+
+```{r}
+vowel_within |> 
+  group_by(plt_vclass.x) |> 
+  filter(prob == min(prob)) |> 
+  ungroup() |> 
+  mutate(plt_vclass = fct_reorder(plt_vclass.x, prob)) ->
+  vowel_min_prob
+```
+
+```{r fig.width=5, fig.height = 5, out.width="80%"}
+vowel_min_prob |> 
+  ggplot()+
+    geom_sf(aes(fill = prob)) +
+    geom_sf(data = rand_vowel |> mutate(plt_vclass = NULL),
+            color = "red") +
+    facet_wrap(~plt_vclass)
 ```
