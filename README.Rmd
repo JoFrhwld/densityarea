@@ -5,6 +5,7 @@ output: github_document
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 
+
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -14,7 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# densityarea
+# densityarea <a href="https://jofrhwld.github.io/densityarea/"><img src="man/figures/logo.svg" align="right" height="139" alt="densityarea website" /></a>
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/JoFrhwld/densityarea/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/JoFrhwld/densityarea/actions/workflows/R-CMD-check.yaml)

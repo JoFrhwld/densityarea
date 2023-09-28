@@ -88,3 +88,8 @@ usethis::use_test("test_range")
 usethis::use_github_action(name = "check-standard")
 usethis::use_pkgdown()
 usethis::use_pkgdown_github_pages()
+
+
+# Docs
+
+usethis::use_logo("logo.svg")
