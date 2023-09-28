@@ -1,0 +1,307 @@
+---
+title: "Using `{sf}` operations"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using `{sf}` operations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(densityarea)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(stringr)
+
+library(sf)
+
+library(ggplot2)
+```
+
+## Density polygons as simple features.
+
+```{r}
+data(s01)
+
+s01 |> 
+  mutate(lF1 = -log(F1),
+         lF2 = -log(F2)) ->
+  s01
+```
+
+```{r}
+s01 |> 
+  filter(
+    plt_vclass %in% c("iy", 
+                      "ey", 
+                      "o", 
+                      "oh")
+  ) ->
+  vowel_subset
+```
+
+```{r}
+vowel_subset |> 
+  group_by(plt_vclass) |> 
+  summarise(
+    polygon = density_polygons(lF2, 
+                               lF1, 
+                               probs = 0.8,
+                               as_sf = TRUE)
+  ) ->
+  vowel_polygons
+```
+
+```{r}
+vowel_polygons
+```
+
+```{r}
+vowel_polygons |> 
+  unnest(polygon) |> 
+  st_sf() ->
+  vowel_sf
+```
+
+```{r}
+ggplot(vowel_sf) +
+  geom_sf(
+    aes(fill = plt_vclass),
+    alpha = 0.6
+  ) +
+    scale_fill_brewer(palette = "Dark2")
+```
+
+## Working 
+
+```{r}
+vowel_sf |> 
+  mutate(
+    area = st_area(geometry)
+  ) ->
+  vowel_sf
+
+vowel_sf
+```
+
+```{r}
+ggplot(vowel_sf) +
+  geom_sf(
+    aes(fill = area),
+    alpha = 0.6
+  )+
+  scale_fill_viridis_c()
+```
+
+```{r}
+vowel_sf |> 
+  st_intersection() -> 
+  vowel_intersections
+
+vowel_intersections
+```
+
+```{r}
+ggplot(vowel_intersections) +
+  geom_sf(
+    aes(fill = n.overlaps)
+  )+
+  scale_fill_viridis_c()
+```
+
+```{r}
+vowel_intersections$origins
+```
+
+```{r}
+new_label <- function(indices, labels){
+  str_c(labels[indices],
+        collapse = "~")
+}
+```
+
+```{r}
+vowel_intersections |> 
+  mutate(
+    groups = map_chr(
+      origins,
+      .f = new_label,
+      labels = vowel_polygons$plt_vclass
+    ) 
+  )->
+  vowel_intersections
+
+vowel_intersections
+```
+
+```{r}
+ggplot(vowel_intersections)+
+  geom_sf(
+    aes(fill = groups)
+  )+
+  scale_fill_brewer(palette = "Dark2")
+```
+
+```{r}
+vowel_intersections |> 
+  mutate(
+    group_area = st_area(geometry),
+    overlapped_proportion = 1-(group_area/area)
+  ) |> 
+  filter(n.overlaps == 1) |> 
+  ggplot(
+    aes(plt_vclass, overlapped_proportion)
+  )+
+    geom_col()+
+    ylim(0,1)
+```
+
+## Spatial merges and filters
+
+```{r}
+library(sfheaders)
+library(forcats)
+```
+
+```{r}
+s01 |> 
+  sf_point(
+    x = "lF2",
+    y = "lF1",
+    keep = TRUE
+  )->
+  s01_sf
+```
+
+```{r}
+s01_sf |> 
+  ggplot()+
+    geom_sf()
+```
+
+```{r}
+s01 |> 
+  filter(plt_vclass == "iy") |> 
+  summarise(
+    polygon = density_polygons(lF2, lF1, probs = 0.8, as_sf =T)
+  ) |> 
+  unnest(polygon) |> 
+  st_sf()->
+  iy_sf
+```
+
+```{r}
+s01_sf |> 
+  rowwise() |> 
+  mutate(
+    in_iy = st_covered_by(geometry, iy_sf, sparse = F)
+  ) |> 
+  ggplot()+
+    geom_sf(aes(color = in_iy))
+```
+
+```{r}
+s01_sf |> 
+  st_filter(
+    iy_sf,
+    .predicate = st_covered_by
+  )->
+  iy_region_points
+```
+
+```{r}
+iy_region_points |> 
+  ggplot()+
+    geom_sf(aes(color = plt_vclass))
+```
+
+```{r}
+s01_sf |> 
+  st_filter(
+    iy_sf, 
+    .predicate = st_disjoint
+  )->
+  iy_nonregion_points
+```
+
+```{r}
+iy_nonregion_points |> 
+  ggplot()+
+    geom_sf()
+```
+
+```{r}
+iy_region_points |> 
+  st_drop_geometry() |> 
+  count(plt_vclass, 
+        name = "in_region") |> 
+  arrange(desc(in_region))->
+  iy_region_count
+```
+
+```{r}
+iy_nonregion_points |> 
+  st_drop_geometry() |> 
+  count(plt_vclass, 
+        name = "out_region") |> 
+  arrange(desc(out_region))->
+  iy_nonregion_count
+```
+
+```{r}
+iy_region_count |> 
+  full_join(iy_nonregion_count) |> 
+  replace_na(
+    list(in_region = 0,
+         out_region = 0)
+    ) |> 
+  mutate(prop_in = in_region/(in_region+out_region)) |> 
+  arrange(desc(prop_in)) |> 
+  mutate(plt_vclass = fct_reorder(plt_vclass, -prop_in)) |> 
+  ggplot(aes(plt_vclass, prop_in))+
+    geom_point()+
+    geom_hline(yintercept = 0.8)
+```
+
+```{r}
+iy_region_count |> 
+  mutate(total_prop = in_region/sum(in_region)) |> 
+  mutate(plt_vclass = fct_reorder(plt_vclass, -total_prop)) |> 
+  ggplot(aes(plt_vclass, total_prop))+
+    geom_point()
+```
+
+```{r}
+s01 |> 
+  ggplot(aes(lF2, lF1))+
+    ggdensity::geom_hdr(method = "freqpoly",
+                        probs = ppoints(10))+
+    coord_fixed()
+```
+
+## Centroids
+
+```{r}
+s01 |> 
+  group_by(
+    plt_vclass
+  ) |> 
+  summarise(
+    polygon = density_polygons(lF2, lF1, probs = c(0.5, 0.8), as_sf = T)
+  ) |> 
+  unnest(polygon) |> 
+  st_sf() |> 
+  st_centroid() |> 
+  ggplot()+
+    geom_sf_label(aes(label = plt_vclass))+
+    facet_wrap(~prob)+
+    coord_fixed()
+```

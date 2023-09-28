@@ -70,7 +70,8 @@ usethis::use_data_raw("s01")
 
 # Documentation ----
 
-usethis::use_vignette(name = "usage", title = "Using densityarea")
+usethis::use_vignette(name = "densityarea", title = "Using `{densityarea}`")
+usethis::use_vignette(name = "sf-operations", title = "Using `{sf}` operations")
 
 
 # Tests ----
