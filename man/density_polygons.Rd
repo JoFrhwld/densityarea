@@ -9,7 +9,7 @@ density_polygons(
   y,
   probs = 0.5,
   as_sf = FALSE,
-  as_list = TRUE,
+  as_list = FALSE,
   range_mult = 0.25,
   rangex = NULL,
   rangey = NULL,
@@ -23,8 +23,8 @@ density_polygons(
 
 \item{as_sf}{Should the returned values be \link[sf:sf]{sf::sf}? Defaults to \code{FALSE}.}
 
-\item{as_list}{Should the returned value be a list? Defaults to \code{TRUE} to
-work well with tidyverse list columns}
+\item{as_list}{Should the returned value be a list? Defaults to \code{FALSE} to
+work with \code{\link[dplyr:reframe]{dplyr::reframe()}}}
 
 \item{range_mult}{A multiplier to the range of \code{x} and \code{y} across which the
 probability density will be estimated.}
@@ -36,7 +36,34 @@ probability density will be estimated.}
 }
 \value{
 A list of data frames, if \code{as_list=TRUE}, or just a data frame,
-if \code{as_list=FALSE}
+if \code{as_list=FALSE}.
+\subsection{Data frame output}{
+
+If \code{as_sf=FALSE}, the data frame has the following columns:
+\describe{
+\item{level_id}{An integer id for each probability level}
+\item{id}{An integer id for each sub-polygon within a probabilty level}
+\item{prob}{The probability level (originally passed to \code{probs})}
+\item{x, y}{The values along the original \code{x} and \code{y} dimensions defining
+the density polygon. These will be renamed to the original input variable
+names.}
+\item{order}{The original plotting order of the polygon points, for
+convenience.}
+}
+}
+
+\subsection{sf output}{
+
+If \code{as_sf=TRUE}, the data frame has the following columns:
+\describe{
+\item{level_id}{An integer id for each probability level}
+\item{prob}{The probability level (originally passed to \code{probs})}
+\item{geometry}{A column of \code{\link[sf:st]{sf::st_polygon()}}s.}
+}
+
+This output will need to be passed to \code{\link[sf:sf]{sf::st_sf()}} to utilize many of the
+features of \link{sf}.
+}
 }
 \description{
 Given numeric vectors \code{x} and \code{y}, \code{density_polygons()} will return
@@ -44,8 +71,8 @@ a data frame, or list of a data frames, of the polygon defining 2d kernel
 densities.
 }
 \details{
-When using \code{density_polygons()} together with tidyverse verbs, like
-\code{\link[dplyr:summarise]{dplyr::summarise()}}, \code{as_list} should be \code{TRUE}.
+When using \code{density_polygons()} together with \code{\link[dplyr:summarise]{dplyr::summarise()}}, \code{as_list}
+should be \code{TRUE}.
 
 If both \code{rangex} and \code{rangey} are defined, \code{range_mult} will be disregarded.
 If only one or the other of \code{rangex} and \code{rangey} are defined, \code{range_mult}
@@ -66,26 +93,22 @@ y <- c(rnorm(100))
 # ordinary data frame output
 poly_df <- density_polygons(x,
                             y,
-                            probs = ppoints(5),
-                            as_list = FALSE)
+                            probs = ppoints(5))
 
 head(poly_df)
 
-# It's necessary to specify a grouping factor that combines `line_id` and `id`
+# It's necessary to specify a grouping factor that combines `level_id` and `id`
 # for cases of multimodal density distributions
 ggplot(poly_df, aes(x, y)) +
-  geom_path(
-    aes(group = paste0(line_id, id),
-        color = prob)
-  )
+  geom_path(aes(group = paste0(level_id, id),
+                color = prob))
 
 
 # sf output
 poly_sf <- density_polygons(x,
                             y,
                             probs = ppoints(5),
-                            as_sf = TRUE,
-                            as_list = FALSE)
+                            as_sf = TRUE)
 
 head(poly_sf)
 
@@ -93,7 +116,7 @@ head(poly_sf)
 poly_sf |>
   arrange(desc(prob)) |>
   ggplot() +
-    geom_sf(aes(fill=prob))
+  geom_sf(aes(fill = prob))
 
 
 # Tidyverse usage
@@ -102,121 +125,63 @@ data(s01)
 
 # Data transformation
 s01 <- s01 |>
-  mutate(
-    log_F1 = -log(F1),
-    log_F2 = -log(F2)
-  )
+  mutate(log_F1 = -log(F1),
+         log_F2 = -log(F2))
 
-# This data has only one group for `name`, but this is the general
-# approach to take for multiple groups
+## Basic usage with `dplyr::reframe()`
+### Data frame output
 s01 |>
   group_by(name) |>
-  summarise(
-    poly_df = density_polygons(log_F2,
-                               log_F1,
-                               probs = ppoints(5),
-                               as_sf = FALSE,
-                               n = 200),
-    poly_sf = density_polygons(log_F2,
-                               log_F1,
-                               probs = ppoints(5),
-                               as_sf = TRUE,
-                               n = 200)
-  )->
-  speaker_polys
+  reframe(density_polygons(log_F2,
+                           log_F1,
+                           probs = ppoints(5))) ->
+  speaker_poly_df
 
-# The list columns will need to be unnested for additional analysis/plotting
-speaker_polys
+speaker_poly_df |>
+  ggplot(aes(log_F2, log_F1)) +
+  geom_path(aes(group = paste0(level_id, id),
+                color = prob)) +
+  coord_fixed()
 
-# plotting the data frame output
-speaker_polys |>
-  unnest(poly_df) |>
-  ggplot(
-    aes(log_F2, log_F1)
-  )+
-    geom_path(
-      aes(group = paste0(line_id, id),
-          color = prob)
-    )+
-    coord_fixed()
-
-# plotting the sf output
-speaker_polys |>
-  unnest(poly_sf) |>
-  st_sf() |>
-  arrange(desc(prob)) |>
-  ggplot()+
-    geom_sf(aes(fill = prob))
-
-# Using additional sf capabilities to explore category overlap
-
-## focusing on two categories
+### sf output
 s01 |>
-  filter(plt_vclass \%in\% c("o", "oh"))->
-  s01_lowback
-
-## raw data
-s01_lowback |>
-  ggplot(
-    aes(log_F2,
-        log_F1)
-  )+
-    geom_point(
-      aes(color = plt_vclass)
-    )+
-    coord_fixed()
-
-## Getting the sf polygons of the categories at 80\%
-s01_lowback |>
-  group_by(plt_vclass) |>
-  summarise(
-    poly_sf = density_polygons(log_F2,
-                               log_F1,
-                               probs = 0.8,
-                               as_sf = TRUE)
-  ) |>
-  unnest(poly_sf) |>
+  group_by(name) |>
+  reframe(density_polygons(log_F2,
+                           log_F1,
+                           probs = ppoints(5),
+                           as_sf = TRUE)) |>
   st_sf() ->
-  lowback_sf
+  speaker_poly_sf
 
-## The basic polygons
-lowback_sf |>
-  ggplot()+
-    geom_sf(
-      aes(fill = plt_vclass),
-      alpha = 0.6
-    )
-
-## `sf::st_intersection()` will generate unique polygons for intersections
-lowback_sf |>
-  st_intersection() |>
-  # recoding overlapping areas
-  mutate(
-    plt_vclass = case_when(
-      n.overlaps > 1 ~ "o~oh",
-      .default = plt_vclass
-    )
-  ) ->
-  lowback_overlap
-
-## plotting the overlap
-lowback_overlap |>
+speaker_poly_sf |>
   ggplot() +
-    geom_sf(
-      aes(fill = plt_vclass)
-    )
+  geom_sf(aes(color = prob),
+          fill = NA)
 
-## plotting overlaping area proportions
-lowback_overlap |>
-  mutate(
-    area = st_area(geometry),
-    pop_area = area/sum(area)
-  ) |>
-  ggplot(
-    aes(plt_vclass, pop_area)
-  )+
-    geom_col(
-      aes(fill = plt_vclass)
-    )+
-    ylim(0,0.5)
+## basic usage with dplyr::summarise()
+### data frame output
+
+s01 |>
+  group_by(name) |>
+  summarise(poly = density_polygons(log_F2,
+                                    log_F1,
+                                    probs = ppoints(5),
+                                    as_list = TRUE)) |>
+  unnest(poly) ->
+  speaker_poly_df
+
+### sf output
+
+s01 |>
+  group_by(name) |>
+  summarise(poly = density_polygons(
+    log_F2,
+    log_F1,
+    probs = ppoints(5),
+    as_list = TRUE,
+    as_sf = TRUE
+  )) |>
+  unnest(poly) |>
+  st_sf() ->
+  speaker_poly_sf
 }
