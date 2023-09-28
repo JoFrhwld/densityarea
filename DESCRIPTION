@@ -30,6 +30,7 @@ Suggests:
     forcats,
     ggplot2,
     knitr,
+    ragg,
     readr,
     rmarkdown,
     testthat (>= 3.0.0),

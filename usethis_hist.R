@@ -62,6 +62,7 @@ usethis::use_package("rlang")
 usethis::use_package("readr", type = "Suggests")
 usethis::use_package("forcats", type = "Suggests")
 usethis::use_package("ggplot2", type = "Suggests")
+usethis::use_package("ragg", type = "Suggests")
 
 
 # Data ----
@@ -88,3 +89,8 @@ usethis::use_test("test_range")
 usethis::use_github_action(name = "check-standard")
 usethis::use_pkgdown()
 usethis::use_pkgdown_github_pages()
+
+
+# Docs
+
+usethis::use_logo("logo.svg")

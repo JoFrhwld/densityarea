@@ -2,3 +2,13 @@ url: https://jofrhwld.github.io/densityarea/
 template:
   bootstrap: 5
 
+reference:
+- title: "Density Polygon Functions"
+  desc: "Functions for getting bivariate density estimates as usable polyons"
+  contents:
+    - starts_with("density_")
+
+- title: "Sample data"
+  desc: "A sample dataset"
+  contents:
+    - s01

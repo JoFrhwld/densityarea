@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# densityarea
+# densityarea <a href="https://jofrhwld.github.io/densityarea/"><img src="man/figures/logo.svg" align="right" height="139" alt="densityarea website" /></a>
 
 <!-- badges: start -->
 
