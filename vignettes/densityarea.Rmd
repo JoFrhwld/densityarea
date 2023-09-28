@@ -2,7 +2,7 @@
 title: "Using `{densityarea}`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Using densityarea}
+  %\VignetteIndexEntry{Using `{densityarea}`}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
