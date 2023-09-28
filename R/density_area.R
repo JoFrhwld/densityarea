@@ -145,15 +145,15 @@ iso_df_to_sf <- function(iso_poly_df, xname, yname){
 #' densities.
 #'
 #' @details
-#' When using `density_polygons()` together with tidyverse verbs, like
-#' [dplyr::summarise()], `as_list` should be `TRUE`.
+#' When using `density_polygons()` together with [dplyr::summarise()], `as_list`
+#' should be `TRUE`.
 #'
 #'
 #' @param x,y Numeric data dimensions
 #' @param probs Probabilities to compute density polygons for
 #' @param as_sf Should the returned values be [sf::sf]? Defaults to `FALSE`.
-#' @param as_list Should the returned value be a list? Defaults to `TRUE` to
-#' work well with tidyverse list columns
+#' @param as_list Should the returned value be a list? Defaults to `FALSE` to
+#' work with [dplyr::reframe()]
 #' @param range_mult A multiplier to the range of `x` and `y` across which the
 #' probability density will be estimated.
 #' @param rangex,rangey Custom ranges across `x` and `y` ranges across which the
@@ -161,7 +161,32 @@ iso_df_to_sf <- function(iso_poly_df, xname, yname){
 #' @param ... Additional arguments to be passed to [ggdensity::get_hdr()]
 #'
 #' @returns A list of data frames, if `as_list=TRUE`, or just a data frame,
-#' if `as_list=FALSE`
+#' if `as_list=FALSE`.
+#'
+#' ## Data frame output
+#'
+#' If `as_sf=FALSE`, the data frame has the following columns:
+#' \describe{
+#'  \item{level_id}{An integer id for each probability level}
+#'  \item{id}{An integer id for each sub-polygon within a probabilty level}
+#'  \item{prob}{The probability level (originally passed to `probs`)}
+#'  \item{x, y}{The values along the original `x` and `y` dimensions defining
+#'  the density polygon. These will be renamed to the original input variable
+#'  names.}
+#'  \item{order}{The original plotting order of the polygon points, for
+#'  convenience.}
+#' }
+#'
+#' ## sf output
+#' If `as_sf=TRUE`, the data frame has the following columns:
+#' \describe{
+#'  \item{level_id}{An integer id for each probability level}
+#'  \item{prob}{The probability level (originally passed to `probs`)}
+#'  \item{geometry}{A column of [sf::st_polygon()]s.}
+#' }
+#'
+#' This output will need to be passed to [sf::st_sf()] to utilize many of the
+#' features of [sf].
 #'
 #' @details
 #' If both `rangex` and `rangey` are defined, `range_mult` will be disregarded.

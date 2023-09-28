@@ -23,8 +23,8 @@ density_polygons(
 
 \item{as_sf}{Should the returned values be \link[sf:sf]{sf::sf}? Defaults to \code{FALSE}.}
 
-\item{as_list}{Should the returned value be a list? Defaults to \code{TRUE} to
-work well with tidyverse list columns}
+\item{as_list}{Should the returned value be a list? Defaults to \code{FALSE} to
+work with \code{\link[dplyr:reframe]{dplyr::reframe()}}}
 
 \item{range_mult}{A multiplier to the range of \code{x} and \code{y} across which the
 probability density will be estimated.}
@@ -36,7 +36,34 @@ probability density will be estimated.}
 }
 \value{
 A list of data frames, if \code{as_list=TRUE}, or just a data frame,
-if \code{as_list=FALSE}
+if \code{as_list=FALSE}.
+\subsection{Data frame output}{
+
+If \code{as_sf=FALSE}, the data frame has the following columns:
+\describe{
+\item{level_id}{An integer id for each probability level}
+\item{id}{An integer id for each sub-polygon within a probabilty level}
+\item{prob}{The probability level (originally passed to \code{probs})}
+\item{x, y}{The values along the original \code{x} and \code{y} dimensions defining
+the density polygon. These will be renamed to the original input variable
+names.}
+\item{order}{The original plotting order of the polygon points, for
+convenience.}
+}
+}
+
+\subsection{sf output}{
+
+If \code{as_sf=TRUE}, the data frame has the following columns:
+\describe{
+\item{level_id}{An integer id for each probability level}
+\item{prob}{The probability level (originally passed to \code{probs})}
+\item{geometry}{A column of \code{\link[sf:st]{sf::st_polygon()}}s.}
+}
+
+This output will need to be passed to \code{\link[sf:sf]{sf::st_sf()}} to utilize many of the
+features of \link{sf}.
+}
 }
 \description{
 Given numeric vectors \code{x} and \code{y}, \code{density_polygons()} will return
@@ -44,8 +71,8 @@ a data frame, or list of a data frames, of the polygon defining 2d kernel
 densities.
 }
 \details{
-When using \code{density_polygons()} together with tidyverse verbs, like
-\code{\link[dplyr:summarise]{dplyr::summarise()}}, \code{as_list} should be \code{TRUE}.
+When using \code{density_polygons()} together with \code{\link[dplyr:summarise]{dplyr::summarise()}}, \code{as_list}
+should be \code{TRUE}.
 
 If both \code{rangex} and \code{rangey} are defined, \code{range_mult} will be disregarded.
 If only one or the other of \code{rangex} and \code{rangey} are defined, \code{range_mult}
