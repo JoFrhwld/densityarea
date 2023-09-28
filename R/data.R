@@ -31,7 +31,7 @@
 #' @source Pitt, M. A., Dilley, L., Johnson, K., Kiesling, S., Raymond, W.,
 #' Hume, E., & Fosler-Lussier, E. (2007). Buckeye Corpus of Conversational
 #' Speech (2nd release). Department of Psychology, Ohio State University.
-#' [www.buckeyecorpus.osu.edu](www.buckeyecorpus.osu.edu)
+#' [https://buckeyecorpus.osu.edu/](https://buckeyecorpus.osu.edu/)
 #'
 #' @source Rosenfelder, I., Fruehwald, J., Brickhouse, C., Evanini, K.,
 #' Seyfarth, S., Gorman, K., Prichard, H., & Yuan, J. (2022).
