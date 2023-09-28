@@ -68,7 +68,7 @@ sf_polygon_safely <- function(...){
       c("There was a problem creating a polygon with {.fun sfheaders::sf_polygon}",
         "i" = "Try examining the results of {.fun densityarea::density_polygons} with {.arg as_sf} set to {.val {FALSE}}.")
     )
-    return(NULL)
+    return(tibble::tibble())
   }
   return(poly_result$result)
 }
@@ -101,7 +101,7 @@ isolines_to_df <- function(isolines, probs, nameswap){
 iso_df_to_sf <- function(iso_poly_df, xname, yname){
 
   if(nrow(iso_poly_df) < 4){
-    return(NULL)
+    return(tibble::tibble())
   }
 
   iso_poly_df |>
@@ -118,7 +118,7 @@ iso_df_to_sf <- function(iso_poly_df, xname, yname){
     ) -> iso_poly_pieces
 
   if(is.null(iso_poly_pieces)){
-    return(NULL)
+    return(tibble::tibble())
   }
 
   iso_poly_pieces |>
@@ -317,7 +317,7 @@ density_area <- function(x,
   ) ->
     iso_poly_sf
 
-  if(!is.null(iso_poly_sf)){
+  if(nrow(iso_poly_sf) > 0){
     iso_poly_sf |>
       sf::st_sf() |>
       dplyr::mutate(
@@ -332,7 +332,7 @@ density_area <- function(x,
     }
 
   }else{
-    area_poly <- NULL
+    area_poly <- tibble::tibble()
   }
 
   if (as_list) {
