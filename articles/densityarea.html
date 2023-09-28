@@ -162,9 +162,9 @@ set, we’ll pass <code>s01</code> through a
 <span>  <span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">area</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 4</span></span></span>
-<span><span class="co">#&gt;   name  line_id  prob  area</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> s01         1   0.8 0.406</span></span></code></pre></div>
+<span><span class="co">#&gt;   name  level_id  prob  area</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> s01          1   0.8 0.406</span></span></code></pre></div>
 <p>Or, if we wanted the areas associated with subsets of the data (say,
 for each <code>vowel</code>) we’d just change our
 <code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">dplyr::group_by()</a></code> call.</p>
@@ -182,23 +182,23 @@ for each <code>vowel</code>) we’d just change our
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">area</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 15 × 5</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># Groups:   name [1]</span></span></span>
-<span><span class="co">#&gt;    name  vowel line_id  prob   area</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> s01   AO          1   0.8 0.488 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> s01   AA          1   0.8 0.278 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> s01   AH          1   0.8 0.274 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> s01   AE          1   0.8 0.258 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> s01   UW          1   0.8 0.229 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> s01   EH          1   0.8 0.226 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> s01   IY          1   0.8 0.206 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> s01   UH          1   0.8 0.203 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> s01   OW          1   0.8 0.197 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> s01   IH          1   0.8 0.186 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> s01   AY          1   0.8 0.171 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> s01   AW          1   0.8 0.170 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> s01   ER          1   0.8 0.145 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> s01   EY          1   0.8 0.101 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span> s01   OY          1   0.8 0.090<span style="text-decoration: underline;">4</span></span></span></code></pre></div>
+<span><span class="co">#&gt;    name  vowel level_id  prob   area</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> s01   AO           1   0.8 0.488 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> s01   AA           1   0.8 0.278 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> s01   AH           1   0.8 0.274 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> s01   AE           1   0.8 0.258 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> s01   UW           1   0.8 0.229 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> s01   EH           1   0.8 0.226 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> s01   IY           1   0.8 0.206 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> s01   UH           1   0.8 0.203 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> s01   OW           1   0.8 0.197 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> s01   IH           1   0.8 0.186 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> s01   AY           1   0.8 0.171 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> s01   AW           1   0.8 0.170 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> s01   ER           1   0.8 0.145 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> s01   EY           1   0.8 0.101 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span> s01   OY           1   0.8 0.090<span style="text-decoration: underline;">4</span></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="density-polygons">Density Polygons<a class="anchor" aria-label="anchor" href="#density-polygons"></a>
@@ -217,28 +217,38 @@ to return a data frame for just one probability level, 60%.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
 <span>    polygons <span class="op">=</span> <span class="fu"><a href="../reference/density_polygons.html">density_polygons</a></span><span class="op">(</span><span class="va">lF2</span>, <span class="va">lF1</span>, probs <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span></span>
 <span>  <span class="op">)</span><span class="op">-&gt;</span></span>
-<span>  <span class="va">sixty_poly_df</span></span></code></pre></div>
+<span>  <span class="va">sixty_poly_df</span></span>
+<span><span class="co">#&gt; Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in</span></span>
+<span><span class="co">#&gt; dplyr 1.1.0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `reframe()` instead.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> When switching from `summarise()` to `reframe()`, remember that `reframe()`</span></span>
+<span><span class="co">#&gt;   always returns an ungrouped data frame and adjust accordingly.</span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
 <p>The resulting summarized data frame has a column called
 <code>polygon</code>, which is a list column containing one data frame
 itself.<br></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sixty_poly_df</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 2</span></span></span>
-<span><span class="co">#&gt;   name  polygons         </span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> s01   <span style="color: #949494;">&lt;tibble [99 × 6]&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 99 × 2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># Groups:   name [1]</span></span></span>
+<span><span class="co">#&gt;    name  polygons$level_id   $id $prob  $lF2  $lF1 $order</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> s01                   1     1   0.6 -<span style="color: #BB0000;">7.57</span> -<span style="color: #BB0000;">6.20</span>      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> s01                   1     1   0.6 -<span style="color: #BB0000;">7.59</span> -<span style="color: #BB0000;">6.19</span>      2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> s01                   1     1   0.6 -<span style="color: #BB0000;">7.61</span> -<span style="color: #BB0000;">6.19</span>      3</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> s01                   1     1   0.6 -<span style="color: #BB0000;">7.64</span> -<span style="color: #BB0000;">6.20</span>      4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> s01                   1     1   0.6 -<span style="color: #BB0000;">7.65</span> -<span style="color: #BB0000;">6.20</span>      5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> s01                   1     1   0.6 -<span style="color: #BB0000;">7.66</span> -<span style="color: #BB0000;">6.21</span>      6</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> s01                   1     1   0.6 -<span style="color: #BB0000;">7.68</span> -<span style="color: #BB0000;">6.21</span>      7</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> s01                   1     1   0.6 -<span style="color: #BB0000;">7.71</span> -<span style="color: #BB0000;">6.21</span>      8</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> s01                   1     1   0.6 -<span style="color: #BB0000;">7.73</span> -<span style="color: #BB0000;">6.20</span>      9</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> s01                   1     1   0.6 -<span style="color: #BB0000;">7.75</span> -<span style="color: #BB0000;">6.20</span>     10</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 89 more rows</span></span></span></code></pre></div>
 <p>We can look directly at this data frame with some indexing:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sixty_poly_df</span><span class="op">$</span><span class="va">polygons</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 6</span></span></span>
-<span><span class="co">#&gt;   line_id    id  prob   lF2   lF1 order</span></span>
-<span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>       1     1   0.6 -<span style="color: #BB0000;">7.57</span> -<span style="color: #BB0000;">6.20</span>     1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>       1     1   0.6 -<span style="color: #BB0000;">7.59</span> -<span style="color: #BB0000;">6.19</span>     2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>       1     1   0.6 -<span style="color: #BB0000;">7.61</span> -<span style="color: #BB0000;">6.19</span>     3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>       1     1   0.6 -<span style="color: #BB0000;">7.64</span> -<span style="color: #BB0000;">6.20</span>     4</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>       1     1   0.6 -<span style="color: #BB0000;">7.65</span> -<span style="color: #BB0000;">6.20</span>     5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>       1     1   0.6 -<span style="color: #BB0000;">7.66</span> -<span style="color: #BB0000;">6.21</span>     6</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 1 1 1 1 1 1</span></span></code></pre></div>
 <p>or, we can unpack it with <code><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">tidyr::unnest()</a></code>.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sixty_poly_df</span> <span class="op">|&gt;</span> </span>
@@ -247,14 +257,15 @@ itself.<br></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sixty_poly_long_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 7</span></span></span>
-<span><span class="co">#&gt;   name  line_id    id  prob   lF2   lF1 order</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> s01         1     1   0.6 -<span style="color: #BB0000;">7.57</span> -<span style="color: #BB0000;">6.20</span>     1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> s01         1     1   0.6 -<span style="color: #BB0000;">7.59</span> -<span style="color: #BB0000;">6.19</span>     2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> s01         1     1   0.6 -<span style="color: #BB0000;">7.61</span> -<span style="color: #BB0000;">6.19</span>     3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> s01         1     1   0.6 -<span style="color: #BB0000;">7.64</span> -<span style="color: #BB0000;">6.20</span>     4</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> s01         1     1   0.6 -<span style="color: #BB0000;">7.65</span> -<span style="color: #BB0000;">6.20</span>     5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> s01         1     1   0.6 -<span style="color: #BB0000;">7.66</span> -<span style="color: #BB0000;">6.21</span>     6</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># Groups:   name [1]</span></span></span>
+<span><span class="co">#&gt;   name  level_id    id  prob   lF2   lF1 order</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> s01          1     1   0.6 -<span style="color: #BB0000;">7.57</span> -<span style="color: #BB0000;">6.20</span>     1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> s01          1     1   0.6 -<span style="color: #BB0000;">7.59</span> -<span style="color: #BB0000;">6.19</span>     2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> s01          1     1   0.6 -<span style="color: #BB0000;">7.61</span> -<span style="color: #BB0000;">6.19</span>     3</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> s01          1     1   0.6 -<span style="color: #BB0000;">7.64</span> -<span style="color: #BB0000;">6.20</span>     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> s01          1     1   0.6 -<span style="color: #BB0000;">7.65</span> -<span style="color: #BB0000;">6.20</span>     5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> s01          1     1   0.6 -<span style="color: #BB0000;">7.66</span> -<span style="color: #BB0000;">6.21</span>     6</span></span></code></pre></div>
 <p>Now, it’s <em>possible</em> for the HDR polygon to actually come in
 multiple pieces, but in this case, there’s just one polygon, so we can
 plot it.</p>
@@ -283,14 +294,32 @@ simply pass a vector of values to <code>probs</code>.</p>
 <span>                                <span class="va">lF1</span>, </span>
 <span>                                probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">0.8</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">)</span><span class="op">-&gt;</span></span>
-<span>  <span class="va">multi_poly_df</span></span></code></pre></div>
+<span>  <span class="va">multi_poly_df</span></span>
+<span><span class="co">#&gt; Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in</span></span>
+<span><span class="co">#&gt; dplyr 1.1.0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `reframe()` instead.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> When switching from `summarise()` to `reframe()`, remember that `reframe()`</span></span>
+<span><span class="co">#&gt;   always returns an ungrouped data frame and adjust accordingly.</span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
 <p>The result is still a single row data frame with a list column.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">multi_poly_df</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 2</span></span></span>
-<span><span class="co">#&gt;   name  polygons          </span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>            </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> s01   <span style="color: #949494;">&lt;tibble [224 × 6]&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 224 × 2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># Groups:   name [1]</span></span></span>
+<span><span class="co">#&gt;    name  polygons$level_id   $id $prob  $lF2  $lF1 $order</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> s01                   2     1   0.8 -<span style="color: #BB0000;">7.80</span> -<span style="color: #BB0000;">6.01</span>      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> s01                   2     1   0.8 -<span style="color: #BB0000;">7.82</span> -<span style="color: #BB0000;">6.02</span>      2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> s01                   2     1   0.8 -<span style="color: #BB0000;">7.85</span> -<span style="color: #BB0000;">6.02</span>      3</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> s01                   2     1   0.8 -<span style="color: #BB0000;">7.87</span> -<span style="color: #BB0000;">6.02</span>      4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> s01                   2     1   0.8 -<span style="color: #BB0000;">7.90</span> -<span style="color: #BB0000;">6.02</span>      5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> s01                   2     1   0.8 -<span style="color: #BB0000;">7.90</span> -<span style="color: #BB0000;">6.03</span>      6</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> s01                   2     1   0.8 -<span style="color: #BB0000;">7.92</span> -<span style="color: #BB0000;">6.06</span>      7</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> s01                   2     1   0.8 -<span style="color: #BB0000;">7.92</span> -<span style="color: #BB0000;">6.06</span>      8</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> s01                   2     1   0.8 -<span style="color: #BB0000;">7.92</span> -<span style="color: #BB0000;">6.09</span>      9</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> s01                   2     1   0.8 -<span style="color: #BB0000;">7.93</span> -<span style="color: #BB0000;">6.11</span>     10</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 214 more rows</span></span></span></code></pre></div>
 <p>But now if we unnest the <code>polygons</code> column, we’ll have
 access to both the 60% and the 80% polygons.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
@@ -326,6 +355,13 @@ package, by passing it the argument <code>as_sf = TRUE</code>.</p>
 <span>                                as_sf <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">-&gt;</span></span>
 <span>  <span class="va">multi_poly_sf</span></span>
+<span><span class="co">#&gt; Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in</span></span>
+<span><span class="co">#&gt; dplyr 1.1.0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `reframe()` instead.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> When switching from `summarise()` to `reframe()`, remember that `reframe()`</span></span>
+<span><span class="co">#&gt;   always returns an ungrouped data frame and adjust accordingly.</span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span>
 <span></span>
 <span><span class="va">multi_poly_sf</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">polygons</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
@@ -342,10 +378,11 @@ result looks like:</p>
 <span><span class="co">#&gt; Bounding box:  xmin: -7.93703 ymin: -6.913825 xmax: -7.208434 ymax: -6.009484</span></span>
 <span><span class="co">#&gt; CRS:           NA</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 4</span></span></span>
-<span><span class="co">#&gt;   name  line_id  prob                                                   geometry</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                                                  <span style="color: #949494; font-style: italic;">&lt;POLYGON&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> s01         1   0.6 ((-7.565679 -6.195695, -7.589224 -6.190341, -7.61277 -6.1…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> s01         2   0.8 ((-7.801131 -6.010429, -7.824676 -6.017003, -7.848222 -6.…</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># Groups:   name [1]</span></span></span>
+<span><span class="co">#&gt;   name  level_id  prob                                                  geometry</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                                                 <span style="color: #949494; font-style: italic;">&lt;POLYGON&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> s01          1   0.6 ((-7.565679 -6.195695, -7.589224 -6.190341, -7.61277 -6.…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> s01          2   0.8 ((-7.801131 -6.010429, -7.824676 -6.017003, -7.848222 -6…</span></span></code></pre></div>
 <p>And here’s a plot.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">multi_poly_long_sf</span><span class="op">)</span><span class="op">+</span></span>

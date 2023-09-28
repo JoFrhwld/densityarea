@@ -62,7 +62,7 @@ densities.</p>
 <span>  <span class="va">y</span>,</span>
 <span>  probs <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  as_sf <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  as_list <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  as_list <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  range_mult <span class="op">=</span> <span class="fl">0.25</span>,</span>
 <span>  rangex <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  rangey <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -85,8 +85,8 @@ densities.</p>
 
 
 <dt>as_list</dt>
-<dd><p>Should the returned value be a list? Defaults to <code>TRUE</code> to
-work well with tidyverse list columns</p></dd>
+<dd><p>Should the returned value be a list? Defaults to <code>FALSE</code> to
+work with <code><a href="https://dplyr.tidyverse.org/reference/reframe.html" class="external-link">dplyr::reframe()</a></code></p></dd>
 
 
 <dt>range_mult</dt>
@@ -108,14 +108,57 @@ probability density will be estimated.</p></dd>
     
 
 <p>A list of data frames, if <code>as_list=TRUE</code>, or just a data frame,
-if <code>as_list=FALSE</code></p>
+if <code>as_list=FALSE</code>.</p><div class="section">
+<h3 id="data-frame-output">Data frame output<a class="anchor" aria-label="anchor" href="#data-frame-output"></a></h3>
+
+
+<p>If <code>as_sf=FALSE</code>, the data frame has the following columns:</p><dl><dt>level_id</dt>
+<dd><p>An integer id for each probability level</p></dd>
+
+<dt>id</dt>
+<dd><p>An integer id for each sub-polygon within a probabilty level</p></dd>
+
+<dt>prob</dt>
+<dd><p>The probability level (originally passed to <code>probs</code>)</p></dd>
+
+<dt>x, y</dt>
+<dd><p>The values along the original <code>x</code> and <code>y</code> dimensions defining
+the density polygon. These will be renamed to the original input variable
+names.</p></dd>
+
+<dt>order</dt>
+<dd><p>The original plotting order of the polygon points, for
+convenience.</p></dd>
+
+
+</dl></div>
+
+
+
+<div class="section">
+<h3 id="sf-output">sf output<a class="anchor" aria-label="anchor" href="#sf-output"></a></h3>
+
+
+<p>If <code>as_sf=TRUE</code>, the data frame has the following columns:</p><dl><dt>level_id</dt>
+<dd><p>An integer id for each probability level</p></dd>
+
+<dt>prob</dt>
+<dd><p>The probability level (originally passed to <code>probs</code>)</p></dd>
+
+<dt>geometry</dt>
+<dd><p>A column of <code><a href="https://r-spatial.github.io/sf/reference/st.html" class="external-link">sf::st_polygon()</a></code>s.</p></dd>
+
+
+</dl><p>This output will need to be passed to <code><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">sf::st_sf()</a></code> to utilize many of the
+features of <a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">sf</a>.</p>
+</div>
 
 
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>When using <code>density_polygons()</code> together with tidyverse verbs, like
-<code><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">dplyr::summarise()</a></code>, <code>as_list</code> should be <code>TRUE</code>.</p>
+    <p>When using <code>density_polygons()</code> together with <code><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">dplyr::summarise()</a></code>, <code>as_list</code>
+should be <code>TRUE</code>.</p>
 <p>If both <code>rangex</code> and <code>rangey</code> are defined, <code>range_mult</code> will be disregarded.
 If only one or the other of <code>rangex</code> and <code>rangey</code> are defined, <code>range_mult</code>
 will be used to produce the range of the undefined one.</p>
@@ -137,27 +180,24 @@ will be used to produce the range of the undefined one.</p>
 <span class="r-in"><span><span class="co"># ordinary data frame output</span></span></span>
 <span class="r-in"><span><span class="va">poly_df</span> <span class="op">&lt;-</span> <span class="fu">density_polygons</span><span class="op">(</span><span class="va">x</span>,</span></span>
 <span class="r-in"><span>                            <span class="va">y</span>,</span></span>
-<span class="r-in"><span>                            probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/ppoints.html" class="external-link">ppoints</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                            as_list <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                            probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/ppoints.html" class="external-link">ppoints</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">poly_df</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   line_id    id  prob     x     y order</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>       5     1 0.881 0.452  1.84     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>       5     1 0.881 0.421  1.84     2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>       5     1 0.881 0.385  1.83     3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>       5     1 0.881 0.318  1.82     4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>       5     1 0.881 0.251  1.81     5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>       5     1 0.881 0.185  1.80     6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   level_id    id  prob     x     y order</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>        5     1 0.881 0.452  1.84     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>        5     1 0.881 0.421  1.84     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>        5     1 0.881 0.385  1.83     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>        5     1 0.881 0.318  1.82     4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>        5     1 0.881 0.251  1.81     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>        5     1 0.881 0.185  1.80     6</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># It's necessary to specify a grouping factor that combines `line_id` and `id`</span></span></span>
+<span class="r-in"><span><span class="co"># It's necessary to specify a grouping factor that combines `level_id` and `id`</span></span></span>
 <span class="r-in"><span><span class="co"># for cases of multimodal density distributions</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">poly_df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_path</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">line_id</span>, <span class="va">id</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>        color <span class="op">=</span> <span class="va">prob</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_path</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">level_id</span>, <span class="va">id</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                color <span class="op">=</span> <span class="va">prob</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="density_polygons-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
@@ -165,8 +205,7 @@ will be used to produce the range of the undefined one.</p>
 <span class="r-in"><span><span class="va">poly_sf</span> <span class="op">&lt;-</span> <span class="fu">density_polygons</span><span class="op">(</span><span class="va">x</span>,</span></span>
 <span class="r-in"><span>                            <span class="va">y</span>,</span></span>
 <span class="r-in"><span>                            probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/ppoints.html" class="external-link">ppoints</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                            as_sf <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>                            as_list <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                            as_sf <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">poly_sf</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 5 features and 2 fields</span>
@@ -175,20 +214,20 @@ will be used to produce the range of the undefined one.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: -2.121515 ymin: -2.335062 xmax: 1.717362 ymax: 1.853571</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CRS:           NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Groups:   line_id [5]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   line_id  prob                                                         geometry</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                                                        <span style="color: #949494; font-style: italic;">&lt;POLYGON&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>       1 0.119 ((-0.01576091 0.8491369, -0.08251555 0.8658244, -0.1492702 0.87…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>       2 0.310 ((0.184503 1.038165, 0.1177484 1.046844, 0.05099373 1.056666, -…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>       3 0.5   ((-0.3495341 1.254354, -0.4162888 1.249887, -0.4830434 1.242762…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>       4 0.690 ((1.006821 1.436427, 0.9855587 1.447619, 0.9188041 1.472848, 0.…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>       5 0.881 ((0.4515216 1.839313, 0.4214659 1.835448, 0.384767 1.831195, 0.…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Groups:   level_id [5]</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   level_id  prob                                                        geometry</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                                                       <span style="color: #949494; font-style: italic;">&lt;POLYGON&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>        1 0.119 ((-0.01576091 0.8491369, -0.08251555 0.8658244, -0.1492702 0.8…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>        2 0.310 ((0.184503 1.038165, 0.1177484 1.046844, 0.05099373 1.056666, …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>        3 0.5   ((-0.3495341 1.254354, -0.4162888 1.249887, -0.4830434 1.24276…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>        4 0.690 ((1.006821 1.436427, 0.9855587 1.447619, 0.9188041 1.472848, 0…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>        5 0.881 ((0.4515216 1.839313, 0.4214659 1.835448, 0.384767 1.831195, 0…</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># `geom_sf()` is from the `{sf}` package.</span></span></span>
 <span class="r-in"><span><span class="va">poly_sf</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">prob</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill<span class="op">=</span><span class="va">prob</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">prob</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="density_polygons-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
@@ -198,133 +237,67 @@ will be used to produce the range of the undefined one.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Data transformation</span></span></span>
 <span class="r-in"><span><span class="va">s01</span> <span class="op">&lt;-</span> <span class="va">s01</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    log_F1 <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">F1</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    log_F2 <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">F2</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>log_F1 <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">F1</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>         log_F2 <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">F2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># This data has only one group for `name`, but this is the general</span></span></span>
-<span class="r-in"><span><span class="co"># approach to take for multiple groups</span></span></span>
+<span class="r-in"><span><span class="co">## Basic usage with `dplyr::reframe()`</span></span></span>
+<span class="r-in"><span><span class="co">### Data frame output</span></span></span>
 <span class="r-in"><span><span class="va">s01</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    poly_df <span class="op">=</span> <span class="fu">density_polygons</span><span class="op">(</span><span class="va">log_F2</span>,</span></span>
-<span class="r-in"><span>                               <span class="va">log_F1</span>,</span></span>
-<span class="r-in"><span>                               probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/ppoints.html" class="external-link">ppoints</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                               as_sf <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>                               n <span class="op">=</span> <span class="fl">200</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    poly_sf <span class="op">=</span> <span class="fu">density_polygons</span><span class="op">(</span><span class="va">log_F2</span>,</span></span>
-<span class="r-in"><span>                               <span class="va">log_F1</span>,</span></span>
-<span class="r-in"><span>                               probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/ppoints.html" class="external-link">ppoints</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                               as_sf <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>                               n <span class="op">=</span> <span class="fl">200</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span><span class="op">-&gt;</span></span></span>
-<span class="r-in"><span>  <span class="va">speaker_polys</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reframe.html" class="external-link">reframe</a></span><span class="op">(</span><span class="fu">density_polygons</span><span class="op">(</span><span class="va">log_F2</span>,</span></span>
+<span class="r-in"><span>                           <span class="va">log_F1</span>,</span></span>
+<span class="r-in"><span>                           probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/ppoints.html" class="external-link">ppoints</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">-&gt;</span></span></span>
+<span class="r-in"><span>  <span class="va">speaker_poly_df</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># The list columns will need to be unnested for additional analysis/plotting</span></span></span>
-<span class="r-in"><span><span class="va">speaker_polys</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   name  poly_df            poly_sf     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> s01   <span style="color: #949494;">&lt;tibble [901 × 6]&gt;</span> <span style="color: #949494;">&lt;sf [5 × 3]&gt;</span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># plotting the data frame output</span></span></span>
-<span class="r-in"><span><span class="va">speaker_polys</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">poly_df</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">log_F2</span>, <span class="va">log_F1</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span><span class="op">+</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_path</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">line_id</span>, <span class="va">id</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>          color <span class="op">=</span> <span class="va">prob</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="op">)</span><span class="op">+</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">speaker_poly_df</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">log_F2</span>, <span class="va">log_F1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_path</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">level_id</span>, <span class="va">id</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                color <span class="op">=</span> <span class="va">prob</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="density_polygons-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># plotting the sf output</span></span></span>
-<span class="r-in"><span><span class="va">speaker_polys</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">poly_sf</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">st_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">prob</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">prob</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">### sf output</span></span></span>
+<span class="r-in"><span><span class="va">s01</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reframe.html" class="external-link">reframe</a></span><span class="op">(</span><span class="fu">density_polygons</span><span class="op">(</span><span class="va">log_F2</span>,</span></span>
+<span class="r-in"><span>                           <span class="va">log_F1</span>,</span></span>
+<span class="r-in"><span>                           probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/ppoints.html" class="external-link">ppoints</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                           as_sf <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">st_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-&gt;</span></span></span>
+<span class="r-in"><span>  <span class="va">speaker_poly_sf</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">speaker_poly_sf</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">prob</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>          fill <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="density_polygons-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Using additional sf capabilities to explore category overlap</span></span></span>
+<span class="r-in"><span><span class="co">## basic usage with dplyr::summarise()</span></span></span>
+<span class="r-in"><span><span class="co">### data frame output</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## focusing on two categories</span></span></span>
 <span class="r-in"><span><span class="va">s01</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">plt_vclass</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"o"</span>, <span class="st">"oh"</span><span class="op">)</span><span class="op">)</span><span class="op">-&gt;</span></span></span>
-<span class="r-in"><span>  <span class="va">s01_lowback</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>poly <span class="op">=</span> <span class="fu">density_polygons</span><span class="op">(</span><span class="va">log_F2</span>,</span></span>
+<span class="r-in"><span>                                    <span class="va">log_F1</span>,</span></span>
+<span class="r-in"><span>                                    probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/ppoints.html" class="external-link">ppoints</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                    as_list <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">poly</span><span class="op">)</span> <span class="op">-&gt;</span></span></span>
+<span class="r-in"><span>  <span class="va">speaker_poly_df</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## raw data</span></span></span>
-<span class="r-in"><span><span class="va">s01_lowback</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">log_F2</span>,</span></span>
-<span class="r-in"><span>        <span class="va">log_F1</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span><span class="op">+</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">plt_vclass</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="op">)</span><span class="op">+</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="density_polygons-5.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co">### sf output</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Getting the sf polygons of the categories at 80%</span></span></span>
-<span class="r-in"><span><span class="va">s01_lowback</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">plt_vclass</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    poly_sf <span class="op">=</span> <span class="fu">density_polygons</span><span class="op">(</span><span class="va">log_F2</span>,</span></span>
-<span class="r-in"><span>                               <span class="va">log_F1</span>,</span></span>
-<span class="r-in"><span>                               probs <span class="op">=</span> <span class="fl">0.8</span>,</span></span>
-<span class="r-in"><span>                               as_sf <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">poly_sf</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="va">s01</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>poly <span class="op">=</span> <span class="fu">density_polygons</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">log_F2</span>,</span></span>
+<span class="r-in"><span>    <span class="va">log_F1</span>,</span></span>
+<span class="r-in"><span>    probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/ppoints.html" class="external-link">ppoints</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    as_list <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>    as_sf <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">poly</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">st_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-&gt;</span></span></span>
-<span class="r-in"><span>  <span class="va">lowback_sf</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## The basic polygons</span></span></span>
-<span class="r-in"><span><span class="va">lowback_sf</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">plt_vclass</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>      alpha <span class="op">=</span> <span class="fl">0.6</span></span></span>
-<span class="r-in"><span>    <span class="op">)</span></span></span>
-<span class="r-plt img"><img src="density_polygons-6.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## `sf::st_intersection()` will generate unique polygons for intersections</span></span></span>
-<span class="r-in"><span><span class="va">lowback_sf</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_binary_ops.html" class="external-link">st_intersection</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="co"># recoding overlapping areas</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    plt_vclass <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>      <span class="va">n.overlaps</span> <span class="op">&gt;</span> <span class="fl">1</span> <span class="op">~</span> <span class="st">"o~oh"</span>,</span></span>
-<span class="r-in"><span>      .default <span class="op">=</span> <span class="va">plt_vclass</span></span></span>
-<span class="r-in"><span>    <span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span> <span class="op">-&gt;</span></span></span>
-<span class="r-in"><span>  <span class="va">lowback_overlap</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## plotting the overlap</span></span></span>
-<span class="r-in"><span><span class="va">lowback_overlap</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">plt_vclass</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="op">)</span></span></span>
-<span class="r-plt img"><img src="density_polygons-7.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## plotting overlaping area proportions</span></span></span>
-<span class="r-in"><span><span class="va">lowback_overlap</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    area <span class="op">=</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_measures.html" class="external-link">st_area</a></span><span class="op">(</span><span class="va">geometry</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    pop_area <span class="op">=</span> <span class="va">area</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">area</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">plt_vclass</span>, <span class="va">pop_area</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span><span class="op">+</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">plt_vclass</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="op">)</span><span class="op">+</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.5</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="density_polygons-8.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span>  <span class="va">speaker_poly_sf</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
