@@ -22,7 +22,7 @@ desc::desc_set(
   "Description",
   "With bivarate data, it is possible to calculate 2-dimensional kernel density
   estimates that return polygons at given levels of probablity. `densityarea`
-  calculates the area of the these density estimates.",
+  returns these polygons for analysis, including for calculating their area.",
   normalize = T
 )
 
