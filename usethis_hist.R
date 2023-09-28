@@ -92,6 +92,11 @@ usethis::use_pkgdown()
 usethis::use_pkgdown_github_pages()
 
 
-# Docs
+# Docs ----
 
 usethis::use_logo("logo.svg")
+
+
+# CRAN submission prep ----
+usethis::use_news_md()
+usethis::use_cran_comments()
