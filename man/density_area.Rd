@@ -34,6 +34,30 @@ probability density will be estimated.}
 
 \item{...}{Additional arguments to be passed to \code{\link[ggdensity:get_hdr]{ggdensity::get_hdr()}}}
 }
+\value{
+A list of data frames, if \code{as_list=TRUE}, or just a data frame,
+if \code{as_list=FALSE}.
+\subsection{Data frame output}{
+
+If \code{as_sf=FALSE}, the data frame has the following columns:
+\describe{
+\item{level_id}{An integer id for each probability level}
+\item{prob}{The probability level (originally passed to \code{probs})}
+\item{area}{The area of the HDR polygon}
+}
+}
+
+\subsection{sf output}{
+
+If \code{as_sf=TRUE}, the data frame has the following columns:
+\describe{
+\item{level_id}{An integer id for each probability level}
+\item{prob}{The probability level (originally passed to \code{probs})}
+\item{geometry}{The \code{sf::st_polygon()} of the HDR}
+\item{area}{The area of the HDR polygon}
+}
+}
+}
 \description{
 A convenience function to get just the areas of density polygons.
 }
