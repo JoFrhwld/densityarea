@@ -43,7 +43,7 @@ usethis::use_github()
 
 # Dependencies ----
 
-
+usethis::use_package("R", type = "Depends", min_version = "4.1")
 
 ## imports ----
 usethis::use_package("isoband")
