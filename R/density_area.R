@@ -76,16 +76,16 @@ sf_polygon_safely <- function(...){
 isolines_to_df <- function(isolines, probs, nameswap){
   isolines |>
     dplyr::mutate(
-      line_id = .data$line |>
+      level_id = .data$line |>
         as.numeric() |>
         dplyr::desc() |>
         as.factor() |>
-        as.numeric(),
-      prob = sort(probs)[.data$line_id],
+        as.integer(),
+      prob = sort(probs)[.data$level_id],
       order = dplyr::row_number()
     ) |>
     dplyr::select(-"line") |>
-    dplyr::select("line_id",
+    dplyr::select("level_id",
                   "id",
                   "prob",
                   "x",
@@ -106,7 +106,7 @@ iso_df_to_sf <- function(iso_poly_df, xname, yname){
 
   iso_poly_df |>
     dplyr::mutate(
-      polygon_id = paste(.data$line_id, .data$id, sep = "-")
+      polygon_id = paste(.data$level_id, .data$id, sep = "-")
     ) -> df_prepared
 
   df_prepared |>
@@ -128,7 +128,7 @@ iso_df_to_sf <- function(iso_poly_df, xname, yname){
 
   iso_poly_pieces_sf |>
     dplyr::group_by(
-      .data$line_id, .data$prob
+      .data$level_id, .data$prob
     ) |>
     dplyr::summarise() ->
     iso_poly_sf
