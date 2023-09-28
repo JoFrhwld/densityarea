@@ -33,6 +33,7 @@ Suggests:
     ragg,
     readr,
     rmarkdown,
+    stringr,
     testthat (>= 3.0.0),
     tidyr
 VignetteBuilder: knitr
