@@ -87,15 +87,14 @@ s01 |>
 ```
 
 To get the area within the 80% density polygon for the entire data set,
-we'll pass `s01` through a `dplyr::summarise()` function.
+we'll pass `s01` through a `dplyr::reframe()` function.
 
 ```{r}
 s01 |> 
   group_by(name) |> 
-  summarise(
-    area = density_area(lF2, lF1, probs = 0.8)
-  ) |> 
-  unnest(area)
+  reframe(
+    density_area(lF2, lF1, probs = 0.8)
+  ) 
 ```
 
 Or, if we wanted the areas associated with subsets of the data (say, for
@@ -104,10 +103,9 @@ each `vowel`) we'd just change our `dplyr::group_by()` call.
 ```{r}
 s01 |> 
   group_by(name, vowel) |> 
-  summarise(
-    area = density_area(lF2, lF1, probs = 0.8)
-  ) |> 
-  unnest(area) ->
+  reframe(
+    density_area(lF2, lF1, probs = 0.8)
+  ) ->
   vowel_areas
 ```
 
@@ -130,42 +128,19 @@ data frame for just one probability level, 60%.
 ```{r}
 s01 |> 
   group_by(name) |> 
-  summarise(
-    polygons = density_polygons(lF2, lF1, probs = 0.6)
+  reframe(
+    density_polygons(lF2, lF1, probs = 0.6)
   )->
   sixty_poly_df
-```
 
-The resulting summarized data frame has a column called `polygon`, which
-is a list column containing one data frame itself.\
-
-```{r}
-sixty_poly_df
-```
-
-We can look directly at this data frame with some indexing:
-
-```{r}
-head(sixty_poly_df$polygons[[1]])
-```
-
-or, we can unpack it with `tidyr::unnest()`.
-
-```{r}
-sixty_poly_df |> 
-  unnest(polygons)->
-  sixty_poly_long_df
-```
-
-```{r}
-head(sixty_poly_long_df)
+head(sixty_poly_df)
 ```
 
 Now, it's *possible* for the HDR polygon to actually come in multiple
 pieces, but in this case, there's just one polygon, so we can plot it.
 
 ```{r fig.width=4, fig.height=4, fig.align='center', out.width="80%"}
-ggplot(sixty_poly_long_df,
+ggplot(sixty_poly_df,
        aes(lF2, lF1))+
   geom_polygon(
     aes(color = prob,
@@ -184,31 +159,18 @@ pass a vector of values to `probs`.
 ```{r}
 s01 |> 
   group_by(name) |> 
-  summarise(
-    polygons = density_polygons(lF2, 
-                                lF1, 
-                                probs = c(0.6, 0.8))
+  reframe(
+    density_polygons(lF2, 
+                     lF1, 
+                     probs = c(0.6, 0.8))
   )->
   multi_poly_df
-```
 
-The result is still a single row data frame with a list column.
-
-```{r}
-multi_poly_df
-```
-
-But now if we unnest the `polygons` column, we'll have access to both
-the 60% and the 80% polygons.
-
-```{r}
-multi_poly_df |> 
-  unnest(polygons)->
-  multi_poly_long_df
+head(multi_poly_df)
 ```
 
 ```{r fig.width=4, fig.height=4, fig.align='center', out.width="80%"}
-ggplot(multi_poly_long_df,
+ggplot(multi_poly_df,
        aes(lF2, lF1))+
   geom_polygon(
     aes(color = prob,
@@ -228,18 +190,14 @@ features, as defined in the `{sf}` package, by passing it the argument
 ```{r}
 s01 |> 
   group_by(name) |> 
-  summarise(
-    polygons = density_polygons(lF2,
-                                lF1,
-                                probs = c(0.8, 0.6),
-                                as_sf = TRUE)
-  ) ->
-  multi_poly_sf
-
-multi_poly_sf |> 
-  unnest(polygons) |> 
+  reframe(
+    density_polygons(lF2,
+                     lF1,
+                     probs = c(0.8, 0.6),
+                     as_sf = TRUE)
+  ) |> 
   st_sf()->
-  multi_poly_long_sf
+  multi_poly_sf
 ```
 
 The final function there, `sf::st_sf()`, wasn't strictly necessary, but
@@ -247,13 +205,13 @@ makes life a little easier for plotting. Here's what the result looks
 like:
 
 ```{r}
-multi_poly_long_sf
+multi_poly_sf
 ```
 
 And here's a plot.
 
 ```{r fig.width=4, fig.height=4, fig.align='center', out.width="80%"}
-ggplot(multi_poly_long_sf)+
+ggplot(multi_poly_sf)+
   geom_sf(aes(color = prob),
           fill = NA)
 ```
