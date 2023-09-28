@@ -1,0 +1,217 @@
+---
+title: "Using `{densityarea}`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using `{densityarea}`}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  message = FALSE,
+  comment = "#>",
+  dev = "ragg_png",
+  dpi = 300
+)
+```
+
+To get started with using `{densityarea}`, we'll need to load some
+packages, and some data to work with. `{densityarea}` is meant to play
+nicely with tidyverse-style data processing, in addition to loading the
+package itself, we'll aslo load `{dplyr}` and `{tidyr}`. We have the
+option of working with the density polygons in the form of simple
+features from `{sf}`, so we'll load that as well. Finally, we'll load
+`{ggplot2}` and `{ggdensity}` for the sake of data visualization.
+
+```{r setup}
+library(densityarea)
+library(dplyr)
+library(tidyr)
+library(sf)
+library(ggplot2)
+library(ggdensity)
+```
+
+The dataset `s01` is a data frame of vowel formant measurements.
+
+```{r dataload}
+data(s01, package = "densityarea")
+head(s01)
+```
+
+## Initial look at the data
+
+Let's plot the original, raw data from `s01`, with the Highest Density
+Regions overlaid (thanks to the `{ggdensity}` package).
+
+```{r fig.width=5, fig.height=3, fig.align='center', out.width="100%"}
+ggplot(data = s01,
+       aes(x = F2,
+           y = F1)
+       )+
+  geom_point(alpha = 0.1)+
+  stat_hdr(probs = c(0.8, 0.5),
+           aes(fill = after_stat(probs)),
+           color = "black",
+           alpha = 0.8)+
+  scale_y_reverse()+
+  scale_x_reverse()+
+  scale_fill_brewer(type = "seq")+
+  coord_fixed()
+```
+
+The function `ggdensity::get_hdr()` is perfect for quickly adding
+interpretable densities to your plots. To work with these densities as
+polygons, we can use `densityarea::density_polygons()`.
+
+## Getting density areas
+
+Per the name of the package, we can get the area within each of these
+density polygons with `density_area()`.
+
+As a first data processing step, let's log transform and flip our `F1`
+and `F2` values.
+
+```{r}
+s01 |> 
+  mutate(
+    lF1 = -log(F1),
+    lF2 = -log(F2)
+  ) -> 
+  s01
+```
+
+To get the area within the 80% density polygon for the entire data set,
+we'll pass `s01` through a `dplyr::reframe()` function.
+
+```{r}
+s01 |> 
+  group_by(name) |> 
+  reframe(
+    density_area(lF2, lF1, probs = 0.8)
+  ) 
+```
+
+Or, if we wanted the areas associated with subsets of the data (say, for
+each `vowel`) we'd just change our `dplyr::group_by()` call.
+
+```{r}
+s01 |> 
+  group_by(name, vowel) |> 
+  reframe(
+    density_area(lF2, lF1, probs = 0.8)
+  ) ->
+  vowel_areas
+```
+
+Let's rearrange the order of rows to see the largest areas first.
+
+```{r}
+vowel_areas |> 
+  arrange(desc(area))
+```
+
+## Density Polygons
+
+### Polygon Data Frames
+
+#### A single probability level
+
+In the simplest approach, we can use `density_polygons()` to return a
+data frame for just one probability level, 60%.
+
+```{r}
+s01 |> 
+  group_by(name) |> 
+  reframe(
+    density_polygons(lF2, lF1, probs = 0.6)
+  )->
+  sixty_poly_df
+
+head(sixty_poly_df)
+```
+
+Now, it's *possible* for the HDR polygon to actually come in multiple
+pieces, but in this case, there's just one polygon, so we can plot it.
+
+```{r fig.width=4, fig.height=4, fig.align='center', out.width="80%"}
+ggplot(sixty_poly_df,
+       aes(lF2, lF1))+
+  geom_polygon(
+    aes(color = prob,
+        group = prob),
+    fill = NA,
+    linewidth = 1
+  )+
+  coord_fixed()
+```
+
+#### Multiple probability levels
+
+To get polygons associated with multiple probability levels, we simply
+pass a vector of values to `probs`.
+
+```{r}
+s01 |> 
+  group_by(name) |> 
+  reframe(
+    density_polygons(lF2, 
+                     lF1, 
+                     probs = c(0.6, 0.8))
+  )->
+  multi_poly_df
+
+head(multi_poly_df)
+```
+
+```{r fig.width=4, fig.height=4, fig.align='center', out.width="80%"}
+ggplot(multi_poly_df,
+       aes(lF2, lF1))+
+  geom_polygon(
+    aes(color = prob,
+        group = prob),
+    fill = NA,
+    linewidth = 1
+  )+
+  coord_fixed()
+```
+
+### Polygon Simple Features
+
+We can also get `density_polygons()` to return the polygons as simple
+features, as defined in the `{sf}` package, by passing it the argument
+`as_sf = TRUE`.
+
+```{r}
+s01 |> 
+  group_by(name) |> 
+  reframe(
+    density_polygons(lF2,
+                     lF1,
+                     probs = c(0.8, 0.6),
+                     as_sf = TRUE)
+  ) |> 
+  st_sf()->
+  multi_poly_sf
+```
+
+The final function there, `sf::st_sf()`, wasn't strictly necessary, but
+makes life a little easier for plotting. Here's what the result looks
+like:
+
+```{r}
+multi_poly_sf
+```
+
+And here's a plot.
+
+```{r fig.width=4, fig.height=4, fig.align='center', out.width="80%"}
+ggplot(multi_poly_sf)+
+  geom_sf(aes(color = prob),
+          fill = NA)
+```

@@ -68,7 +68,7 @@ sf_polygon_safely <- function(...){
       c("There was a problem creating a polygon with {.fun sfheaders::sf_polygon}",
         "i" = "Try examining the results of {.fun densityarea::density_polygons} with {.arg as_sf} set to {.val {FALSE}}.")
     )
-    return(NULL)
+    return(tibble::tibble())
   }
   return(poly_result$result)
 }
@@ -76,16 +76,16 @@ sf_polygon_safely <- function(...){
 isolines_to_df <- function(isolines, probs, nameswap){
   isolines |>
     dplyr::mutate(
-      line_id = .data$line |>
+      level_id = .data$line |>
         as.numeric() |>
         dplyr::desc() |>
         as.factor() |>
-        as.numeric(),
-      prob = sort(probs)[.data$line_id],
+        as.integer(),
+      prob = sort(probs)[.data$level_id],
       order = dplyr::row_number()
     ) |>
     dplyr::select(-"line") |>
-    dplyr::select("line_id",
+    dplyr::select("level_id",
                   "id",
                   "prob",
                   "x",
@@ -101,12 +101,12 @@ isolines_to_df <- function(isolines, probs, nameswap){
 iso_df_to_sf <- function(iso_poly_df, xname, yname){
 
   if(nrow(iso_poly_df) < 4){
-    return(NULL)
+    return(tibble::tibble())
   }
 
   iso_poly_df |>
     dplyr::mutate(
-      polygon_id = paste(.data$line_id, .data$id, sep = "-")
+      polygon_id = paste(.data$level_id, .data$id, sep = "-")
     ) -> df_prepared
 
   df_prepared |>
@@ -118,7 +118,7 @@ iso_df_to_sf <- function(iso_poly_df, xname, yname){
     ) -> iso_poly_pieces
 
   if(is.null(iso_poly_pieces)){
-    return(NULL)
+    return(tibble::tibble())
   }
 
   iso_poly_pieces |>
@@ -128,7 +128,7 @@ iso_df_to_sf <- function(iso_poly_df, xname, yname){
 
   iso_poly_pieces_sf |>
     dplyr::group_by(
-      .data$line_id, .data$prob
+      .data$level_id, .data$prob
     ) |>
     dplyr::summarise() ->
     iso_poly_sf
@@ -145,15 +145,15 @@ iso_df_to_sf <- function(iso_poly_df, xname, yname){
 #' densities.
 #'
 #' @details
-#' When using `density_polygons()` together with tidyverse verbs, like
-#' [dplyr::summarise()], `as_list` should be `TRUE`.
+#' When using `density_polygons()` together with [dplyr::summarise()], `as_list`
+#' should be `TRUE`.
 #'
 #'
 #' @param x,y Numeric data dimensions
 #' @param probs Probabilities to compute density polygons for
 #' @param as_sf Should the returned values be [sf::sf]? Defaults to `FALSE`.
-#' @param as_list Should the returned value be a list? Defaults to `TRUE` to
-#' work well with tidyverse list columns
+#' @param as_list Should the returned value be a list? Defaults to `FALSE` to
+#' work with [dplyr::reframe()]
 #' @param range_mult A multiplier to the range of `x` and `y` across which the
 #' probability density will be estimated.
 #' @param rangex,rangey Custom ranges across `x` and `y` ranges across which the
@@ -161,7 +161,32 @@ iso_df_to_sf <- function(iso_poly_df, xname, yname){
 #' @param ... Additional arguments to be passed to [ggdensity::get_hdr()]
 #'
 #' @returns A list of data frames, if `as_list=TRUE`, or just a data frame,
-#' if `as_list=FALSE`
+#' if `as_list=FALSE`.
+#'
+#' ## Data frame output
+#'
+#' If `as_sf=FALSE`, the data frame has the following columns:
+#' \describe{
+#'  \item{level_id}{An integer id for each probability level}
+#'  \item{id}{An integer id for each sub-polygon within a probabilty level}
+#'  \item{prob}{The probability level (originally passed to `probs`)}
+#'  \item{x, y}{The values along the original `x` and `y` dimensions defining
+#'  the density polygon. These will be renamed to the original input variable
+#'  names.}
+#'  \item{order}{The original plotting order of the polygon points, for
+#'  convenience.}
+#' }
+#'
+#' ## sf output
+#' If `as_sf=TRUE`, the data frame has the following columns:
+#' \describe{
+#'  \item{level_id}{An integer id for each probability level}
+#'  \item{prob}{The probability level (originally passed to `probs`)}
+#'  \item{geometry}{A column of [sf::st_polygon()]s.}
+#' }
+#'
+#' This output will need to be passed to [sf::st_sf()] to utilize many of the
+#' features of [sf].
 #'
 #' @details
 #' If both `rangex` and `rangey` are defined, `range_mult` will be disregarded.
@@ -180,7 +205,7 @@ density_polygons <- function(x,
                              y,
                              probs = 0.5,
                              as_sf = FALSE,
-                             as_list = TRUE,
+                             as_list = FALSE,
                              range_mult = 0.25,
                              rangex = NULL,
                              rangey = NULL,
@@ -273,8 +298,8 @@ density_polygons <- function(x,
 density_area <- function(x,
                          y,
                          probs = 0.5,
-                         as_sf = F,
-                         as_list = T,
+                         as_sf = FALSE,
+                         as_list = FALSE,
                          range_mult = 0.25,
                          rangex = NULL,
                          rangey = NULL,
@@ -292,7 +317,7 @@ density_area <- function(x,
   ) ->
     iso_poly_sf
 
-  if(!is.null(iso_poly_sf)){
+  if(nrow(iso_poly_sf) > 0){
     iso_poly_sf |>
       sf::st_sf() |>
       dplyr::mutate(
@@ -307,7 +332,7 @@ density_area <- function(x,
     }
 
   }else{
-    area_poly <- NULL
+    area_poly <- tibble::tibble()
   }
 
   if (as_list) {

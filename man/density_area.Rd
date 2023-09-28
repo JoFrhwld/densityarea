@@ -8,8 +8,8 @@ density_area(
   x,
   y,
   probs = 0.5,
-  as_sf = F,
-  as_list = T,
+  as_sf = FALSE,
+  as_list = FALSE,
   range_mult = 0.25,
   rangex = NULL,
   rangey = NULL,
@@ -57,24 +57,15 @@ y <- rnorm(100)
 
 density_area(x,
              y,
-             probs = ppoints(50),
-             as_list = FALSE) ->
+             probs = ppoints(50)) ->
   poly_areas_df
 
 head(poly_areas_df)
 
 # Plotting the relationship between probability level and area
 ggplot(poly_areas_df,
-       aes(prob, area))+
+       aes(prob, area)) +
   geom_line()
-
-# Assuming distribution is circular, the radius would be `sqrt(area/pi).`
-poly_areas_df |>
-  mutate(
-    radius = sqrt(area/pi)
-  ) |>
-  ggplot(aes(prob, radius)) +
-    geom_line()
 
 # Tidyverse usage
 
@@ -84,42 +75,35 @@ data(s01)
 
 s01 |>
   mutate(log_F2 = -log(F2),
-         log_F1 = -log(F1))->
+         log_F1 = -log(F1)) ->
   s01
+
+### Data frame output
 
 s01 |>
   group_by(name) |>
-  summarise(
-    area_df = density_area(log_F2,
-                           log_F1,
-                           probs = ppoints(10),
-                           as_sf = FALSE,
-                           n = 200),
-    area_sf = density_area(log_F2,
-                           log_F1,
-                           probs = ppoints(10),
-                           as_sf = TRUE,
-                           n = 200)
-  ) ->
-  s01_areas
+  reframe(density_area(log_F2,
+                       log_F1,
+                       probs = ppoints(10))) ->
+  s01_areas_df
 
-s01_areas |>
-  unnest(area_df) |>
-  ggplot(
-    aes(prob, area)
-  )+
-    geom_line()
+s01_areas_df |>
+  ggplot(aes(prob, area)) +
+  geom_line()
 
-# If the shape were an equilateral triangle, each side would be
-# equal to `sqrt(area * (4/sqrt(3)))`
+### Including sf output
 
-s01_areas |>
-  unnest(
-    area_sf
-  ) |>
-  st_sf() |>
+s01 |>
+  group_by(name) |>
+  reframe(density_area(log_F2,
+                       log_F1,
+                       probs = ppoints(10),
+                       as_sf = TRUE)) |>
+  st_sf() ->
+  s01_areas_sf
+
+s01_areas_sf |>
   arrange(desc(prob)) |>
-  mutate(side = sqrt(area * (4/sqrt(3)))) |>
-  ggplot()+
-    geom_sf(aes(fill = side))
+  ggplot() +
+  geom_sf(aes(fill = area))
 }

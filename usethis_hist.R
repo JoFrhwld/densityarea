@@ -22,7 +22,7 @@ desc::desc_set(
   "Description",
   "With bivarate data, it is possible to calculate 2-dimensional kernel density
   estimates that return polygons at given levels of probablity. `densityarea`
-  calculates the area of the these density estimates.",
+  returns these polygons for analysis, including for calculating their area.",
   normalize = T
 )
 
@@ -43,7 +43,7 @@ usethis::use_github()
 
 # Dependencies ----
 
-
+usethis::use_package("R", type = "Depends", min_version = "4.1")
 
 ## imports ----
 usethis::use_package("isoband")
@@ -62,14 +62,16 @@ usethis::use_package("rlang")
 usethis::use_package("readr", type = "Suggests")
 usethis::use_package("forcats", type = "Suggests")
 usethis::use_package("ggplot2", type = "Suggests")
-
+usethis::use_package("ragg", type = "Suggests")
+usethis::use_package("stringr", type = "Suggests")
 
 # Data ----
 usethis::use_data_raw("s01")
 
 # Documentation ----
 
-usethis::use_vignette(name = "usage", title = "Using densityarea")
+usethis::use_vignette(name = "densityarea", title = "Using `{densityarea}`")
+usethis::use_vignette(name = "sf-operations", title = "Using `{sf}` operations")
 
 
 # Tests ----
@@ -88,3 +90,8 @@ usethis::use_test("test_range")
 usethis::use_github_action(name = "check-standard")
 usethis::use_pkgdown()
 usethis::use_pkgdown_github_pages()
+
+
+# Docs
+
+usethis::use_logo("logo.svg")
