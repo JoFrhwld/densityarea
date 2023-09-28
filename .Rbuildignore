@@ -10,3 +10,4 @@ usethis_hist.R
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+^cran-comments\.md$
