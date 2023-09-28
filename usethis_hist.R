@@ -63,14 +63,15 @@ usethis::use_package("readr", type = "Suggests")
 usethis::use_package("forcats", type = "Suggests")
 usethis::use_package("ggplot2", type = "Suggests")
 usethis::use_package("ragg", type = "Suggests")
-
+usethis::use_package("stringr", type = "Suggests")
 
 # Data ----
 usethis::use_data_raw("s01")
 
 # Documentation ----
 
-usethis::use_vignette(name = "usage", title = "Using densityarea")
+usethis::use_vignette(name = "densityarea", title = "Using `{densityarea}`")
+usethis::use_vignette(name = "sf-operations", title = "Using `{sf}` operations")
 
 
 # Tests ----
