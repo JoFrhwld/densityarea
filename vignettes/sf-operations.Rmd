@@ -10,9 +10,14 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  message = FALSE,
+  comment = "#>",
+  dev = "ragg_png",
+  dpi = 300  
 )
 ```
+
+Because `{densityarea}` can return `{sf}` polygons, this can allow you to use its functionality (see [this cheat sheet](https://github.com/rstudio/cheatsheets/blob/main/sf.pdf) for some examples).
 
 ```{r setup}
 library(densityarea)
@@ -26,7 +31,9 @@ library(sf)
 library(ggplot2)
 ```
 
-## Density polygons as simple features.
+## Density polygons as simple features
+
+As a first example, we'll estimate how much different data clusters overlap in the `s01` dataset.
 
 ```{r}
 data(s01)
@@ -36,6 +43,15 @@ s01 |>
          lF2 = -log(F2)) ->
   s01
 ```
+
+We'll focus on the vowels `iy`, `ey`, `o` and `oh` which correspond to the following lexical classes:
+
+| vowel label | lexical class         |
+|-------------|-----------------------|
+| `iy`        | [Fleece]{.smallcaps}  |
+| `ey`        | [Face]{.smallcaps}    |
+| `o`         | [Lot]{.smallcaps}     |
+| `oh`        | [Thought]{.smallcaps} |
 
 ```{r}
 s01 |> 
@@ -48,31 +64,27 @@ s01 |>
   vowel_subset
 ```
 
+Within this subset of vowel categories, we'll get the 80% probability density estimate as `sf::st_polygon()`s.
+
 ```{r}
 vowel_subset |> 
   group_by(plt_vclass) |> 
-  summarise(
-    polygon = density_polygons(lF2, 
-                               lF1, 
-                               probs = 0.8,
-                               as_sf = TRUE)
-  ) ->
+  reframe(
+    density_polygons(lF2, 
+                     lF1, 
+                     probs = 0.8,
+                     as_sf = TRUE)
+  ) |> 
+  st_sf()->
   vowel_polygons
-```
 
-```{r}
 vowel_polygons
 ```
 
-```{r}
-vowel_polygons |> 
-  unnest(polygon) |> 
-  st_sf() ->
-  vowel_sf
-```
+We can plot these directly by using the `sf::geom_sf()` geom for ggplot2.
 
-```{r}
-ggplot(vowel_sf) +
+```{r fig.width=5, fig.height=5, out.width="80%", fig.align='center'}
+ggplot(vowel_polygons) +
   geom_sf(
     aes(fill = plt_vclass),
     alpha = 0.6
@@ -80,20 +92,20 @@ ggplot(vowel_sf) +
     scale_fill_brewer(palette = "Dark2")
 ```
 
-## Working 
+### Initial `{sf}` operations
+
+All of the `{sf}` operations for geometries are available to use on `vowel_polygons`. For example, we can get the area of each polygon, with `sf::st_area()` and use it in plotting.
 
 ```{r}
-vowel_sf |> 
+vowel_polygons |> 
   mutate(
     area = st_area(geometry)
   ) ->
-  vowel_sf
-
-vowel_sf
+  vowel_polygons
 ```
 
-```{r}
-ggplot(vowel_sf) +
+```{r fig.width=5, fig.height=5, out.width="80%", fig.align='center'}
+ggplot(vowel_polygons) +
   geom_sf(
     aes(fill = area),
     alpha = 0.6
@@ -101,15 +113,36 @@ ggplot(vowel_sf) +
   scale_fill_viridis_c()
 ```
 
+Or, we can get the polygon centroids and plot them.
+
+```{r fig.width=5, fig.height=5, out.width="80%", fig.align='center'}
+vowel_polygons |> 
+  st_centroid() |> 
+  ggplot()+
+    geom_sf_label(
+      aes(label = plt_vclass,
+          color = plt_vclass,
+          size = area)
+    )+
+    scale_color_brewer(palette = "Dark2")+
+    coord_fixed()
+```
+
+### Getting overlaps
+
+To use the density polygons like "cookie cutters" on each other, we need to use `st_intersections()`.
+
 ```{r}
-vowel_sf |> 
+vowel_polygons |> 
   st_intersection() -> 
   vowel_intersections
 
 vowel_intersections
 ```
 
-```{r}
+This data frame contains a polygon for each unique intersection of the input polygons, with a new `n.overlaps` column.
+
+```{r fig.width=5, fig.height=5, out.width="80%", fig.align='center'}
 ggplot(vowel_intersections) +
   geom_sf(
     aes(fill = n.overlaps)
@@ -117,9 +150,7 @@ ggplot(vowel_intersections) +
   scale_fill_viridis_c()
 ```
 
-```{r}
-vowel_intersections$origins
-```
+The labels of the new overlapping regions aren't very informative, but we can create some new labels by using the indices in the `origins` column.
 
 ```{r}
 new_label <- function(indices, labels){
@@ -136,13 +167,14 @@ vowel_intersections |>
       .f = new_label,
       labels = vowel_polygons$plt_vclass
     ) 
-  )->
+  ) |> 
+  relocate(groups, .after = plt_vclass)->
   vowel_intersections
 
 vowel_intersections
 ```
 
-```{r}
+```{r fig.width=5, fig.height=5, out.width="80%", fig.align='center'}
 ggplot(vowel_intersections)+
   geom_sf(
     aes(fill = groups)
@@ -150,7 +182,9 @@ ggplot(vowel_intersections)+
   scale_fill_brewer(palette = "Dark2")
 ```
 
-```{r}
+We can also calculate the areas of these new polygons, and compare them to the original areas (which have been preserved in `areas`.
+
+```{r fig.width=5, fig.height=3, out.width="80%", fig.align='center'}
 vowel_intersections |> 
   mutate(
     group_area = st_area(geometry),
@@ -164,7 +198,9 @@ vowel_intersections |>
     ylim(0,1)
 ```
 
-## Spatial merges and filters
+## Spatial filters and joins
+
+There are also a number of spatial filters and merges that can be used interestingly if the original data points are also converted to sf objects.
 
 ```{r}
 library(sfheaders)
@@ -173,40 +209,37 @@ library(forcats)
 
 ```{r}
 s01 |> 
-  sf_point(
+  sfheaders::sf_point(
     x = "lF2",
     y = "lF1",
     keep = TRUE
-  )->
+  ) ->
   s01_sf
+
+s01_sf
 ```
 
-```{r}
+```{r fig.width=5, fig.height=5, out.width="80%", fig.align='center'}
 s01_sf |> 
   ggplot()+
     geom_sf()
 ```
 
+Next, we can get the density polygon for a single vowel,.
+
 ```{r}
 s01 |> 
   filter(plt_vclass == "iy") |> 
-  summarise(
-    polygon = density_polygons(lF2, lF1, probs = 0.8, as_sf =T)
+  reframe(
+    density_polygons(lF2, lF1, probs = 0.8, as_sf =T)
   ) |> 
-  unnest(polygon) |> 
   st_sf()->
   iy_sf
 ```
 
-```{r}
-s01_sf |> 
-  rowwise() |> 
-  mutate(
-    in_iy = st_covered_by(geometry, iy_sf, sparse = F)
-  ) |> 
-  ggplot()+
-    geom_sf(aes(color = in_iy))
-```
+### Spatial filter
+
+Let's get all of the points in `s01_sf` that are "covered by" the `iy_sf` polygon.
 
 ```{r}
 s01_sf |> 
@@ -214,94 +247,59 @@ s01_sf |>
     iy_sf,
     .predicate = st_covered_by
   )->
-  iy_region_points
+  covered_by_iy
 ```
 
-```{r}
-iy_region_points |> 
+```{r fig.width=5, fig.height=5, out.width="80%", fig.align='center'}
+covered_by_iy |> 
+  mutate(plt_vclass = plt_vclass |> 
+           fct_infreq() |> 
+           fct_lump_n(5)) |> 
   ggplot()+
-    geom_sf(aes(color = plt_vclass))
+    geom_sf(data = iy_sf)+
+    geom_sf(aes(color = plt_vclass))+
+    scale_color_brewer(palette = "Dark2")
 ```
 
+Obviously, the 80% probability density area for `iy` is not a homogeneous region.
+
+```{r fig.width=5, fig.height=3, out.width="80%", fig.align='center'}
+covered_by_iy |> 
+  mutate(plt_vclass = plt_vclass |> 
+           fct_infreq() |> 
+           fct_lump_n(5)) |> 
+  count(plt_vclass) |> 
+  ggplot(aes(plt_vclass, n))+
+    geom_col(
+      aes(fill = plt_vclass)
+    )+
+    scale_fill_brewer(palette = "Dark2")
+```
+
+### Spatial joins
+
+For a spatial join, let's see which vowel category a random vowel token is close to.
+
 ```{r}
+set.seed(100)
 s01_sf |> 
-  st_filter(
-    iy_sf, 
-    .predicate = st_disjoint
-  )->
-  iy_nonregion_points
+  slice_sample(n = 1)->
+  rand_vowel
+
+rand_vowel
 ```
 
-```{r}
-iy_nonregion_points |> 
-  ggplot()+
-    geom_sf()
-```
-
-```{r}
-iy_region_points |> 
-  st_drop_geometry() |> 
-  count(plt_vclass, 
-        name = "in_region") |> 
-  arrange(desc(in_region))->
-  iy_region_count
-```
-
-```{r}
-iy_nonregion_points |> 
-  st_drop_geometry() |> 
-  count(plt_vclass, 
-        name = "out_region") |> 
-  arrange(desc(out_region))->
-  iy_nonregion_count
-```
-
-```{r}
-iy_region_count |> 
-  full_join(iy_nonregion_count) |> 
-  replace_na(
-    list(in_region = 0,
-         out_region = 0)
-    ) |> 
-  mutate(prop_in = in_region/(in_region+out_region)) |> 
-  arrange(desc(prop_in)) |> 
-  mutate(plt_vclass = fct_reorder(plt_vclass, -prop_in)) |> 
-  ggplot(aes(plt_vclass, prop_in))+
-    geom_point()+
-    geom_hline(yintercept = 0.8)
-```
-
-```{r}
-iy_region_count |> 
-  mutate(total_prop = in_region/sum(in_region)) |> 
-  mutate(plt_vclass = fct_reorder(plt_vclass, -total_prop)) |> 
-  ggplot(aes(plt_vclass, total_prop))+
-    geom_point()
-```
+Then, we'll get density polygons at a few different probability points for all vowels.
 
 ```{r}
 s01 |> 
-  ggplot(aes(lF2, lF1))+
-    ggdensity::geom_hdr(method = "freqpoly",
-                        probs = ppoints(10))+
-    coord_fixed()
-```
-
-## Centroids
-
-```{r}
-s01 |> 
-  group_by(
-    plt_vclass
-  ) |> 
-  summarise(
-    polygon = density_polygons(lF2, lF1, probs = c(0.5, 0.8), as_sf = T)
-  ) |> 
-  unnest(polygon) |> 
-  st_sf() |> 
-  st_centroid() |> 
-  ggplot()+
-    geom_sf_label(aes(label = plt_vclass))+
-    facet_wrap(~prob)+
-    coord_fixed()
+  group_by(plt_vclass) |> 
+  reframe(
+    density_polygons(
+      lF1,
+      lF2,
+      probs = ppoints(3),
+      as_sf = T
+    )
+  )
 ```
