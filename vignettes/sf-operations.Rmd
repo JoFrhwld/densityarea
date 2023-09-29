@@ -164,14 +164,14 @@ ggplot(vowel_intersections) +
 
 The labels of the new overlapping regions aren't very informative, but we can create some new labels by using the indices in the `origins` column.
 
-```{r, eval=stringr_inst, include=stringr_inst}
+```{r, eval=stringr_inst, echo=stringr_inst}
 new_label <- function(indices, labels){
   str_c(labels[indices],
         collapse = "~")
 }
 ```
 
-```{r, eval=!stringr_inst, include=!stringr_inst}
+```{r, eval=!stringr_inst, echo=!stringr_inst}
 new_label <- function(indicies, labels){
   paste0(labels[indicies], collapse = "~")
 }
@@ -330,7 +330,7 @@ s01 |>
 
 There are 5 probability level polygons for each vowel category in `vowel_probs`. We join the random vowel's data onto this set of polygons with `st_join()`.
 
-```{r, eval=tidyr_inst, include=tidyr_inst}
+```{r, eval=tidyr_inst, echo=tidyr_inst}
 vowel_probs |> 
   st_join(
     rand_vowel,
@@ -340,7 +340,7 @@ vowel_probs |>
   vowel_within
 ```
 
-```{r, eval=!tidyr_inst, include=!tidyr_inst}
+```{r, eval=!tidyr_inst, echo=!tidyr_inst}
 vowel_probs |> 
   st_join(
     rand_vowel,
@@ -354,7 +354,7 @@ vowel_probs |>
 
 Now, for each vowel category in this new data frame, let's get the *smallest* probability polygon (i.e. where the random point is closest to the center probability mass).
 
-```{r, eval=forcats_inst, include = forcats_inst}
+```{r, eval=forcats_inst, echo = forcats_inst}
 vowel_within |> 
   group_by(plt_vclass.x) |> 
   filter(prob == min(prob)) |> 
@@ -363,7 +363,7 @@ vowel_within |>
   vowel_min_prob
 ```
 
-```{r, eval=!forcats_inst, include = !forcats_inst}
+```{r, eval=!forcats_inst, echo = !forcats_inst}
 vowel_within |> 
   group_by(plt_vclass.x) |> 
   filter(prob == min(prob)) |> 
