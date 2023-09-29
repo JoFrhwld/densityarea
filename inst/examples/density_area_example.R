@@ -61,7 +61,7 @@ s01 |>
   st_sf() ->
   s01_areas_sf
 
-if(ggplot1_inst){
+if(ggplot2_inst){
   s01_areas_sf |>
     arrange(desc(prob)) |>
     ggplot() +
