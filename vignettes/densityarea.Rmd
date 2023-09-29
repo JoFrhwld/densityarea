@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 To get started with using `{densityarea}`, we'll need to load some
 packages, and some data to work with. `{densityarea}` is meant to play
 nicely with tidyverse-style data processing, in addition to loading the
-package itself, we'll aslo load `{dplyr}` and `{tidyr}`. We have the
+package itself, we'll also load `{dplyr}` and `{tidyr}`. We have the
 option of working with the density polygons in the form of simple
 features from `{sf}`, so we'll load that as well. Finally, we'll load
 `{ggplot2}` and `{ggdensity}` for the sake of data visualization.
