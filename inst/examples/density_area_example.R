@@ -2,7 +2,7 @@ library(densityarea)
 library(dplyr)
 library(sf)
 
-gglot2_inst <- require(ggplot2)
+ggplot2_inst <- require(ggplot2)
 
 # basic usage
 
