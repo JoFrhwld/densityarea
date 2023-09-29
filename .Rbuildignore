@@ -11,3 +11,4 @@ usethis_hist.R
 ^docs$
 ^pkgdown$
 ^cran-comments\.md$
+.DS_Store
