@@ -274,7 +274,7 @@ s01_sf |>
   covered_by_iy
 ```
 
-```{r eval=ggplot2_inst, fig.width=5, fig.height=5, out.width="80%", fig.align='center'}
+```{r eval=ggplot2_inst & forcats_inst, fig.width=5, fig.height=5, out.width="80%", fig.align='center'}
 covered_by_iy |> 
   mutate(plt_vclass = plt_vclass |> 
            fct_infreq() |> 
