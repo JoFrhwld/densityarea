@@ -1,9 +1,10 @@
 library(densityarea)
-library(ggplot2)
 library(dplyr)
 library(purrr)
-library(tidyr)
 library(sf)
+
+ggplot2_inst <- require(ggplot2)
+tidyr_inst <- require(tidyr)
 
 set.seed(10)
 x <- c(rnorm(100))
@@ -18,10 +19,11 @@ head(poly_df)
 
 # It's necessary to specify a grouping factor that combines `level_id` and `id`
 # for cases of multimodal density distributions
-ggplot(poly_df, aes(x, y)) +
-  geom_path(aes(group = paste0(level_id, id),
-                color = prob))
-
+if(ggplot2_inst){
+  ggplot(poly_df, aes(x, y)) +
+    geom_path(aes(group = paste0(level_id, id),
+                  color = prob))
+}
 
 # sf output
 poly_sf <- density_polygons(x,
@@ -32,11 +34,12 @@ poly_sf <- density_polygons(x,
 head(poly_sf)
 
 # `geom_sf()` is from the `{sf}` package.
-poly_sf |>
-  arrange(desc(prob)) |>
-  ggplot() +
-  geom_sf(aes(fill = prob))
-
+if(ggplot2_inst){
+  poly_sf |>
+    arrange(desc(prob)) |>
+    ggplot() +
+    geom_sf(aes(fill = prob))
+}
 
 # Tidyverse usage
 
@@ -56,11 +59,13 @@ s01 |>
                            probs = ppoints(5))) ->
   speaker_poly_df
 
-speaker_poly_df |>
-  ggplot(aes(log_F2, log_F1)) +
-  geom_path(aes(group = paste0(level_id, id),
-                color = prob)) +
-  coord_fixed()
+if(ggplot2_inst){
+  speaker_poly_df |>
+    ggplot(aes(log_F2, log_F1)) +
+    geom_path(aes(group = paste0(level_id, id),
+                  color = prob)) +
+    coord_fixed()
+}
 
 ### sf output
 s01 |>
@@ -72,34 +77,39 @@ s01 |>
   st_sf() ->
   speaker_poly_sf
 
-speaker_poly_sf |>
-  ggplot() +
-  geom_sf(aes(color = prob),
-          fill = NA)
+if(ggplot2_inst){
+  speaker_poly_sf |>
+    ggplot() +
+    geom_sf(aes(color = prob),
+            fill = NA)
+}
 
 ## basic usage with dplyr::summarise()
 ### data frame output
 
-s01 |>
-  group_by(name) |>
-  summarise(poly = density_polygons(log_F2,
-                                    log_F1,
-                                    probs = ppoints(5),
-                                    as_list = TRUE)) |>
-  unnest(poly) ->
-  speaker_poly_df
-
+if(tidyr_inst){
+  s01 |>
+    group_by(name) |>
+    summarise(poly = density_polygons(log_F2,
+                                      log_F1,
+                                      probs = ppoints(5),
+                                      as_list = TRUE)) |>
+    unnest(poly) ->
+    speaker_poly_df
+}
 ### sf output
 
-s01 |>
-  group_by(name) |>
-  summarise(poly = density_polygons(
-    log_F2,
-    log_F1,
-    probs = ppoints(5),
-    as_list = TRUE,
-    as_sf = TRUE
-  )) |>
-  unnest(poly) |>
-  st_sf() ->
-  speaker_poly_sf
+if(tidyr_inst){
+  s01 |>
+    group_by(name) |>
+    summarise(poly = density_polygons(
+      log_F2,
+      log_F1,
+      probs = ppoints(5),
+      as_list = TRUE,
+      as_sf = TRUE
+    )) |>
+    unnest(poly) |>
+    st_sf() ->
+    speaker_poly_sf
+}
