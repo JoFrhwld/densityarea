@@ -284,7 +284,7 @@ covered_by_iy |>
 
 Obviously, the 80% probability density area for `iy` is not a homogeneous region.
 
-```{r eval=ggplot2_inst, fig.width=5, fig.height=3, out.width="80%", fig.align='center'}
+```{r eval=all_suggest, fig.width=5, fig.height=3, out.width="80%", fig.align='center'}
 covered_by_iy |> 
   mutate(plt_vclass = plt_vclass |> 
            fct_infreq() |> 
@@ -354,12 +354,22 @@ vowel_probs |>
 
 Now, for each vowel category in this new data frame, let's get the *smallest* probability polygon (i.e. where the random point is closest to the center probability mass).
 
-```{r}
+```{r, eval=forcats_inst, include = forcats_inst}
 vowel_within |> 
   group_by(plt_vclass.x) |> 
   filter(prob == min(prob)) |> 
   ungroup() |> 
   mutate(plt_vclass = fct_reorder(plt_vclass.x, prob)) ->
+  vowel_min_prob
+```
+
+```{r, eval=!forcats_inst, include = !forcats_inst}
+vowel_within |> 
+  group_by(plt_vclass.x) |> 
+  filter(prob == min(prob)) |> 
+  ungroup() |> 
+  mutate(plt_vclass = reorder(factor(plt_vclass.x),
+                              prob)) ->
   vowel_min_prob
 ```
 
