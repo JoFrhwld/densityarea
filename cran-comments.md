@@ -29,6 +29,6 @@ There are no references in my package description.
 
 Words flagged as possibly misspelled are not misspelled:
 
-- bivariate
-- densityarea
+* bivariate
+* densityarea
 
