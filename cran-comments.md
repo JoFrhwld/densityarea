@@ -24,3 +24,11 @@ Licensee.
 ## Description refrerences
 
 There are no references in my package description.
+
+## Spellcheck
+
+Words flagged as possibly misspelled are not misspelled:
+
+- bivariate
+- densityarea
+
