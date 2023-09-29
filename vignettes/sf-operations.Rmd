@@ -38,8 +38,9 @@ library(ggplot2)
 tidyr_inst <- require(tidyr)
 stringr_inst <- require(stringr)
 ggplot2_inst <- require(ggplot2)
+forcats_inst <- require(forcats)
 
-all_suggest <- all(c(tidyr_inst, stringr_inst, ggplot2_inst))
+all_suggest <- all(c(tidyr_inst, stringr_inst, ggplot2_inst, forcats_inst))
 ```
 
 ## Density polygons as simple features
@@ -227,10 +228,6 @@ library(sfheaders)
 library(forcats)
 ```
 
-```{r, include=F}
-forcats_inst <- require(forcats)
-```
-
 ```{r}
 s01 |> 
   sfheaders::sf_point(
@@ -274,7 +271,7 @@ s01_sf |>
   covered_by_iy
 ```
 
-```{r eval=ggplot2_inst & forcats_inst, fig.width=5, fig.height=5, out.width="80%", fig.align='center'}
+```{r eval=all_suggest, fig.width=5, fig.height=5, out.width="80%", fig.align='center'}
 covered_by_iy |> 
   mutate(plt_vclass = plt_vclass |> 
            fct_infreq() |> 
