@@ -1,3 +1,10 @@
+## Resubmission
+
+This is a resubmission. In this version I have:
+
+* written the package name in single quotes in the description.
+* There are no references in the description field to format.
+
 ## R CMD check results
 
 0 errors | 0 warnings | 1 note
