@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">densityarea</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,6 +53,9 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/sf-operations.html">Using `{sf}` operations</a>
   </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
@@ -90,22 +93,22 @@
 <p>To get started with using <a href="https://github.com/JoFrhwld/densityarea" class="external-link">densityarea</a>, we’ll need to
 load some packages, and some data to work with.
 <a href="https://github.com/JoFrhwld/densityarea" class="external-link">densityarea</a> is meant to play nicely with tidyverse-style
-data processing, in addition to loading the package itself, we’ll aslo
-load <a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a> and <a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a>. We have the option
-of working with the density polygons in the form of simple features from
-<a href="https://r-spatial.github.io/sf/" class="external-link">sf</a>, so we’ll load that as well. Finally, we’ll load
-<a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a> and <a href="https://jamesotto852.github.io/ggdensity/" class="external-link">ggdensity</a> for the sake of data
-visualization.</p>
+data processing, in addition to loading the package itself, we’ll also
+load <a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a>. We have the option of working with the
+density polygons in the form of simple features from <a href="https://r-spatial.github.io/sf/" class="external-link">sf</a>,
+so we’ll load that as well. Finally, we’ll load <a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a>
+and <a href="https://jamesotto852.github.io/ggdensity/" class="external-link">ggdensity</a> for the sake of data visualization.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/JoFrhwld/densityarea" class="external-link">densityarea</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># package depends</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/JoFrhwld/densityarea" class="external-link">densityarea</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jamesotto852.github.io/ggdensity/" class="external-link">ggdensity</a></span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
 <p>The dataset <code>s01</code> is a data frame of vowel formant
 measurements.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">s01</span>, package <span class="op">=</span> <span class="st">"densityarea"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">s01</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 10</span></span></span>
@@ -123,7 +126,7 @@ measurements.</p>
 <p>Let’s plot the original, raw data from <code>s01</code>, with the
 Highest Density Regions overlaid (thanks to the <a href="https://jamesotto852.github.io/ggdensity/" class="external-link">ggdensity</a>
 package).</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">s01</span>,</span>
 <span>       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">F2</span>,</span>
 <span>           y <span class="op">=</span> <span class="va">F1</span><span class="op">)</span></span>
@@ -137,7 +140,7 @@ package).</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_reverse</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_fill_brewer</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"seq"</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="densityarea_files/figure-html/unnamed-chunk-2-1.png" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="densityarea_files/figure-html/unnamed-chunk-3-1.png" width="100%" style="display: block; margin: auto;"></p>
 <p>The function <code><a href="https://jamesotto852.github.io/ggdensity/reference/get_hdr.html" class="external-link">ggdensity::get_hdr()</a></code> is perfect for quickly
 adding interpretable densities to your plots. To work with these
 densities as polygons, we can use
@@ -150,7 +153,7 @@ densities as polygons, we can use
 density polygons with <code><a href="../reference/density_area.html">density_area()</a></code>.</p>
 <p>As a first data processing step, let’s log transform and flip our
 <code>F1</code> and <code>F2</code> values.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">s01</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    lF1 <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">F1</span><span class="op">)</span>,</span>
@@ -160,7 +163,7 @@ density polygons with <code><a href="../reference/density_area.html">density_are
 <p>To get the area within the 80% density polygon for the entire data
 set, we’ll pass <code>s01</code> through a <code><a href="https://dplyr.tidyverse.org/reference/reframe.html" class="external-link">dplyr::reframe()</a></code>
 function.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">s01</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reframe.html" class="external-link">reframe</a></span><span class="op">(</span></span>
@@ -173,7 +176,7 @@ function.</p>
 <p>Or, if we wanted the areas associated with subsets of the data (say,
 for each <code>vowel</code>) we’d just change our
 <code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">dplyr::group_by()</a></code> call.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">s01</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">name</span>, <span class="va">vowel</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reframe.html" class="external-link">reframe</a></span><span class="op">(</span></span>
@@ -181,7 +184,7 @@ for each <code>vowel</code>) we’d just change our
 <span>  <span class="op">)</span> <span class="op">-&gt;</span></span>
 <span>  <span class="va">vowel_areas</span></span></code></pre></div>
 <p>Let’s rearrange the order of rows to see the largest areas first.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vowel_areas</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">area</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 15 × 5</span></span></span>
@@ -214,7 +217,7 @@ for each <code>vowel</code>) we’d just change our
 </h4>
 <p>In the simplest approach, we can use <code><a href="../reference/density_polygons.html">density_polygons()</a></code>
 to return a data frame for just one probability level, 60%.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">s01</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reframe.html" class="external-link">reframe</a></span><span class="op">(</span></span>
@@ -235,7 +238,7 @@ to return a data frame for just one probability level, 60%.</p>
 <p>Now, it’s <em>possible</em> for the HDR polygon to actually come in
 multiple pieces, but in this case, there’s just one polygon, so we can
 plot it.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">sixty_poly_df</span>,</span>
 <span>       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">lF2</span>, <span class="va">lF1</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_polygon.html" class="external-link">geom_polygon</a></span><span class="op">(</span></span>
@@ -245,14 +248,14 @@ plot it.</p>
 <span>    linewidth <span class="op">=</span> <span class="fl">1</span></span>
 <span>  <span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="densityarea_files/figure-html/unnamed-chunk-8-1.png" width="80%" style="display: block; margin: auto;"></p>
+<p><img src="densityarea_files/figure-html/unnamed-chunk-9-1.png" width="80%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="multiple-probability-levels">Multiple probability levels<a class="anchor" aria-label="anchor" href="#multiple-probability-levels"></a>
 </h4>
 <p>To get polygons associated with multiple probability levels, we
 simply pass a vector of values to <code>probs</code>.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">s01</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reframe.html" class="external-link">reframe</a></span><span class="op">(</span></span>
@@ -272,7 +275,7 @@ simply pass a vector of values to <code>probs</code>.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> s01          2     1   0.8 -<span style="color: #BB0000;">7.87</span> -<span style="color: #BB0000;">6.02</span>     4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> s01          2     1   0.8 -<span style="color: #BB0000;">7.90</span> -<span style="color: #BB0000;">6.02</span>     5</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> s01          2     1   0.8 -<span style="color: #BB0000;">7.90</span> -<span style="color: #BB0000;">6.03</span>     6</span></span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">multi_poly_df</span>,</span>
 <span>       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">lF2</span>, <span class="va">lF1</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_polygon.html" class="external-link">geom_polygon</a></span><span class="op">(</span></span>
@@ -282,7 +285,7 @@ simply pass a vector of values to <code>probs</code>.</p>
 <span>    linewidth <span class="op">=</span> <span class="fl">1</span></span>
 <span>  <span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="densityarea_files/figure-html/unnamed-chunk-10-1.png" width="80%" style="display: block; margin: auto;"></p>
+<p><img src="densityarea_files/figure-html/unnamed-chunk-11-1.png" width="80%" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div class="section level3">
@@ -291,7 +294,7 @@ simply pass a vector of values to <code>probs</code>.</p>
 <p>We can also get <code><a href="../reference/density_polygons.html">density_polygons()</a></code> to return the
 polygons as simple features, as defined in the <a href="https://r-spatial.github.io/sf/" class="external-link">sf</a>
 package, by passing it the argument <code>as_sf = TRUE</code>.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">s01</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reframe.html" class="external-link">reframe</a></span><span class="op">(</span></span>
@@ -305,7 +308,7 @@ package, by passing it the argument <code>as_sf = TRUE</code>.</p>
 <p>The final function there, <code><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">sf::st_sf()</a></code>, wasn’t strictly
 necessary, but makes life a little easier for plotting. Here’s what the
 result looks like:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">multi_poly_sf</span></span>
 <span><span class="co">#&gt; Simple feature collection with 2 features and 3 fields</span></span>
 <span><span class="co">#&gt; Geometry type: POLYGON</span></span>
@@ -318,11 +321,11 @@ result looks like:</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> s01          1   0.6 ((-7.565679 -6.195695, -7.589224 -6.190341, -7.61277 -6.…</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> s01          2   0.8 ((-7.801131 -6.010429, -7.824676 -6.017003, -7.848222 -6…</span></span></code></pre></div>
 <p>And here’s a plot.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">multi_poly_sf</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">prob</span><span class="op">)</span>,</span>
 <span>          fill <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></code></pre></div>
-<p><img src="densityarea_files/figure-html/unnamed-chunk-13-1.png" width="80%" style="display: block; margin: auto;"></p>
+<p><img src="densityarea_files/figure-html/unnamed-chunk-14-1.png" width="80%" style="display: block; margin: auto;"></p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
