@@ -23,18 +23,26 @@ knitr::opts_chunk$set(
 To get started with using `{densityarea}`, we'll need to load some
 packages, and some data to work with. `{densityarea}` is meant to play
 nicely with tidyverse-style data processing, in addition to loading the
-package itself, we'll aslo load `{dplyr}` and `{tidyr}`. We have the
-option of working with the density polygons in the form of simple
-features from `{sf}`, so we'll load that as well. Finally, we'll load
-`{ggplot2}` and `{ggdensity}` for the sake of data visualization.
+package itself, we'll also load `{dplyr}`. We have the option of working
+with the density polygons in the form of simple features from `{sf}`, so
+we'll load that as well. Finally, we'll load `{ggplot2}` and
+`{ggdensity}` for the sake of data visualization.
 
 ```{r setup}
+# package depends
 library(densityarea)
 library(dplyr)
-library(tidyr)
 library(sf)
-library(ggplot2)
 library(ggdensity)
+```
+
+```{r setup2, eval = F}
+#| package suggests
+library(ggplot2)
+```
+
+```{r include=F}
+ggplot2_inst <- require(ggplot2)
 ```
 
 The dataset `s01` is a data frame of vowel formant measurements.
@@ -49,7 +57,7 @@ head(s01)
 Let's plot the original, raw data from `s01`, with the Highest Density
 Regions overlaid (thanks to the `{ggdensity}` package).
 
-```{r fig.width=5, fig.height=3, fig.align='center', out.width="100%"}
+```{r eval=ggplot2_inst, fig.width=5, fig.height=3, fig.align='center', out.width="100%"}
 ggplot(data = s01,
        aes(x = F2,
            y = F1)
@@ -139,7 +147,7 @@ head(sixty_poly_df)
 Now, it's *possible* for the HDR polygon to actually come in multiple
 pieces, but in this case, there's just one polygon, so we can plot it.
 
-```{r fig.width=4, fig.height=4, fig.align='center', out.width="80%"}
+```{r eval=ggplot2_inst, fig.width=4, fig.height=4, fig.align='center', out.width="80%"}
 ggplot(sixty_poly_df,
        aes(lF2, lF1))+
   geom_polygon(
@@ -169,7 +177,7 @@ s01 |>
 head(multi_poly_df)
 ```
 
-```{r fig.width=4, fig.height=4, fig.align='center', out.width="80%"}
+```{r eval=ggplot2_inst, fig.width=4, fig.height=4, fig.align='center', out.width="80%"}
 ggplot(multi_poly_df,
        aes(lF2, lF1))+
   geom_polygon(
@@ -210,7 +218,7 @@ multi_poly_sf
 
 And here's a plot.
 
-```{r fig.width=4, fig.height=4, fig.align='center', out.width="80%"}
+```{r eval=ggplot2_inst, fig.width=4, fig.height=4, fig.align='center', out.width="80%"}
 ggplot(multi_poly_sf)+
   geom_sf(aes(color = prob),
           fill = NA)

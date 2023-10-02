@@ -34,6 +34,30 @@ probability density will be estimated.}
 
 \item{...}{Additional arguments to be passed to \code{\link[ggdensity:get_hdr]{ggdensity::get_hdr()}}}
 }
+\value{
+A list of data frames, if \code{as_list=TRUE}, or just a data frame,
+if \code{as_list=FALSE}.
+\subsection{Data frame output}{
+
+If \code{as_sf=FALSE}, the data frame has the following columns:
+\describe{
+\item{level_id}{An integer id for each probability level}
+\item{prob}{The probability level (originally passed to \code{probs})}
+\item{area}{The area of the HDR polygon}
+}
+}
+
+\subsection{sf output}{
+
+If \code{as_sf=TRUE}, the data frame has the following columns:
+\describe{
+\item{level_id}{An integer id for each probability level}
+\item{prob}{The probability level (originally passed to \code{probs})}
+\item{geometry}{The \code{sf::st_polygon()} of the HDR}
+\item{area}{The area of the HDR polygon}
+}
+}
+}
 \description{
 A convenience function to get just the areas of density polygons.
 }
@@ -44,10 +68,10 @@ will be used to produce the range of the undefined one.
 }
 \examples{
 library(densityarea)
-library(ggplot2)
 library(dplyr)
-library(tidyr)
 library(sf)
+
+ggplot2_inst <- require(ggplot2)
 
 # basic usage
 
@@ -63,9 +87,11 @@ density_area(x,
 head(poly_areas_df)
 
 # Plotting the relationship between probability level and area
-ggplot(poly_areas_df,
-       aes(prob, area)) +
-  geom_line()
+if(ggplot2_inst){
+  ggplot(poly_areas_df,
+         aes(prob, area)) +
+    geom_line()
+}
 
 # Tidyverse usage
 
@@ -87,9 +113,11 @@ s01 |>
                        probs = ppoints(10))) ->
   s01_areas_df
 
-s01_areas_df |>
-  ggplot(aes(prob, area)) +
-  geom_line()
+if(ggplot2_inst){
+  s01_areas_df |>
+    ggplot(aes(prob, area)) +
+    geom_line()
+}
 
 ### Including sf output
 
@@ -102,8 +130,10 @@ s01 |>
   st_sf() ->
   s01_areas_sf
 
-s01_areas_sf |>
-  arrange(desc(prob)) |>
-  ggplot() +
-  geom_sf(aes(fill = area))
+if(ggplot2_inst){
+  s01_areas_sf |>
+    arrange(desc(prob)) |>
+    ggplot() +
+    geom_sf(aes(fill = area))
+}
 }

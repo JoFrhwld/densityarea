@@ -21,11 +21,12 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/JoFrhwld/densityarea/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/JoFrhwld/densityarea/actions/workflows/R-CMD-check.yaml)
+[![CRAN status](https://www.r-pkg.org/badges/version/densityarea)](https://CRAN.R-project.org/package=densityarea)
 <!-- badges: end -->
 
 The package `{ggdensity}`[^1] allows for plotting interpretable bivariate densities by using highest density ranges (HDRs). For example:
 
-[^1]: Otto J, Kahle D (2023). *ggdensity: Interpretable Bivariate Density Visualization with 'ggplot2'*. <https://jamesotto852.github.io/ggdensity/,> <https://github.com/jamesotto852/ggdensity/.>
+[^1]: Otto J, Kahle D (2023). *ggdensity: Interpretable Bivariate Density Visualization with 'ggplot2'*. <https://jamesotto852.github.io/ggdensity/> <https://github.com/jamesotto852/ggdensity/>
 
 ```{r}
 #| fig-width: 4
@@ -50,7 +51,12 @@ ggplot(df, aes(x,y))+
 
 ## Installation
 
-You can install the development version of `{densityarea}` from [GitHub](https://github.com/) with:
+You can install `{densityarea}` from CRAN with:
+```r
+install.packages("densityarea")
+```
+
+Or you can install the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")

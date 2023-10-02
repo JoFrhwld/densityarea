@@ -7,21 +7,21 @@ usethis::use_author(
   given = "Josef",
   family = "Fruehwald",
   email = "jofrhwld@gmail.com",
-  role = c("aut","cre")
+  role = c("aut","cre", "cph")
 )
 
 usethis::use_roxygen_md()
 
 desc::desc_set(
   "Title",
-  "Areas of Bivarate Density Distributions"
+  "Polygons of Bivariate Density Distributions"
 )
 
 
 desc::desc_set(
   "Description",
-  "With bivarate data, it is possible to calculate 2-dimensional kernel density
-  estimates that return polygons at given levels of probablity. `densityarea`
+  "With bivariate data, it is possible to calculate 2-dimensional kernel density
+  estimates that return polygons at given levels of probability. 'densityarea'
   returns these polygons for analysis, including for calculating their area.",
   normalize = T
 )
@@ -92,6 +92,11 @@ usethis::use_pkgdown()
 usethis::use_pkgdown_github_pages()
 
 
-# Docs
+# Docs ----
 
 usethis::use_logo("logo.svg")
+
+
+# CRAN submission prep ----
+usethis::use_news_md()
+usethis::use_cran_comments()

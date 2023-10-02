@@ -27,12 +27,12 @@ McAuliffe, M., Fatchurrahman, M. R., GalaxieT, NTT123,
 Amogh Gulati, Coles, A., Veaux, C., Eren, E., Mishra, H., Paweł Potrykus,
 Jung, S., Sereda, T., Mestrou, T., Michaelasocolof, & Vannawillerton. (2022).
 MontrealCorpusTools/Montreal-Forced-Aligner: Version 2.0.1 (v2.0.1)
-\url{https://doi.org/10.5281/ZENODO.6658586}
+\doi{10.5281/ZENODO.6658586}
 
 Pitt, M. A., Dilley, L., Johnson, K., Kiesling, S., Raymond, W.,
 Hume, E., & Fosler-Lussier, E. (2007). Buckeye Corpus of Conversational
 Speech (2nd release). Department of Psychology, Ohio State University.
-\url{www.buckeyecorpus.osu.edu}
+\url{https://buckeyecorpus.osu.edu/}
 
 Rosenfelder, I., Fruehwald, J., Brickhouse, C., Evanini, K.,
 Seyfarth, S., Gorman, K., Prichard, H., & Yuan, J. (2022).
