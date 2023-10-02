@@ -95,3 +95,8 @@ usethis::use_pkgdown_github_pages()
 # Docs
 
 usethis::use_logo("logo.svg")
+
+
+# CRAN publication
+usethis::use_cran_badge()
+usethis::use_github_release()
