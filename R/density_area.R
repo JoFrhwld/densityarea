@@ -289,6 +289,27 @@ density_polygons <- function(x,
 #' If only one or the other of `rangex` and `rangey` are defined, `range_mult`
 #' will be used to produce the range of the undefined one.
 #'
+#' @returns A list of data frames, if `as_list=TRUE`, or just a data frame,
+#' if `as_list=FALSE`.
+#'
+#' ## Data frame output
+#'
+#' If `as_sf=FALSE`, the data frame has the following columns:
+#' \describe{
+#'  \item{level_id}{An integer id for each probability level}
+#'  \item{prob}{The probability level (originally passed to `probs`)}
+#'  \item{area}{The area of the HDR polygon}
+#' }
+#'
+#' ## sf output
+#' If `as_sf=TRUE`, the data frame has the following columns:
+#' \describe{
+#'  \item{level_id}{An integer id for each probability level}
+#'  \item{prob}{The probability level (originally passed to `probs`)}
+#'  \item{geometry}{The `sf::st_polygon()` of the HDR}
+#'  \item{area}{The area of the HDR polygon}
+#' }
+#'
 #' @example inst/examples/density_area_example.R
 #'
 #' @importFrom dplyr .data

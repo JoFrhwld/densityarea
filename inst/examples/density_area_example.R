@@ -1,8 +1,8 @@
 library(densityarea)
-library(ggplot2)
 library(dplyr)
-library(tidyr)
 library(sf)
+
+ggplot2_inst <- require(ggplot2)
 
 # basic usage
 
@@ -18,9 +18,11 @@ density_area(x,
 head(poly_areas_df)
 
 # Plotting the relationship between probability level and area
-ggplot(poly_areas_df,
-       aes(prob, area)) +
-  geom_line()
+if(ggplot2_inst){
+  ggplot(poly_areas_df,
+         aes(prob, area)) +
+    geom_line()
+}
 
 # Tidyverse usage
 
@@ -42,9 +44,11 @@ s01 |>
                        probs = ppoints(10))) ->
   s01_areas_df
 
-s01_areas_df |>
-  ggplot(aes(prob, area)) +
-  geom_line()
+if(ggplot2_inst){
+  s01_areas_df |>
+    ggplot(aes(prob, area)) +
+    geom_line()
+}
 
 ### Including sf output
 
@@ -57,7 +61,9 @@ s01 |>
   st_sf() ->
   s01_areas_sf
 
-s01_areas_sf |>
-  arrange(desc(prob)) |>
-  ggplot() +
-  geom_sf(aes(fill = area))
+if(ggplot2_inst){
+  s01_areas_sf |>
+    arrange(desc(prob)) |>
+    ggplot() +
+    geom_sf(aes(fill = area))
+}

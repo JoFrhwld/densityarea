@@ -1,13 +1,13 @@
 Type: Package
 Package: densityarea
-Title: Areas of Bivarate Density Distributions
+Title: Polygons of Bivariate Density Distributions
 Version: 0.1.0.9000
 Authors@R: 
-    person("Josef", "Fruehwald", , "jofrhwld@gmail.com", role = c("aut", "cre"))
-Description: With bivarate data, it is possible to calculate 2-dimensional
-    kernel density estimates that return polygons at given levels of
-    probablity. `densityarea` returns these polygons for analysis,
-    including for calculating their area.
+    person("Josef", "Fruehwald", , "jofrhwld@gmail.com", role = c("aut", "cre", "cph"))
+Description: With bivariate data, it is possible to calculate
+    2-dimensional kernel density estimates that return polygons at given
+    levels of probability. 'densityarea' returns these polygons for
+    analysis, including for calculating their area.
 License: GPL (>= 3)
 URL: https://github.com/JoFrhwld/densityarea,
     https://jofrhwld.github.io/densityarea/

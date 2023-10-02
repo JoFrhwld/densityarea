@@ -6,6 +6,8 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/JoFrhwld/densityarea/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/JoFrhwld/densityarea/actions/workflows/R-CMD-check.yaml)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/densityarea)](https://CRAN.R-project.org/package=densityarea)
 <!-- badges: end -->
 
 The package `{ggdensity}`[^1] allows for plotting interpretable
@@ -34,7 +36,13 @@ analysis.
 
 ## Installation
 
-You can install the development version of `{densityarea}` from
+You can install `{densityarea}` from CRAN with:
+
+``` r
+install.packages("densityarea")
+```
+
+Or you can install the development version from
 [GitHub](https://github.com/) with:
 
 ``` r
@@ -98,5 +106,5 @@ information on using spatial polygons, see `vignette("sf-operations")`.
 
 [^1]: Otto J, Kahle D (2023). *ggdensity: Interpretable Bivariate
     Density Visualization with ‘ggplot2’*.
-    <https://jamesotto852.github.io/ggdensity/,>
-    <https://github.com/jamesotto852/ggdensity/.>
+    <https://jamesotto852.github.io/ggdensity/>
+    <https://github.com/jamesotto852/ggdensity/>
