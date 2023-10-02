@@ -1,7 +1,7 @@
 Type: Package
 Package: densityarea
 Title: Areas of Bivarate Density Distributions
-Version: 0.1.0
+Version: 0.1.0.9000
 Authors@R: 
     person("Josef", "Fruehwald", , "jofrhwld@gmail.com", role = c("aut", "cre"))
 Description: With bivarate data, it is possible to calculate 2-dimensional
