@@ -1,3 +1,5 @@
+# densityarea (development version)
+
 # densityarea 0.1.1
 
 -   Excluding .Rprofile from Github releases (see #37)
