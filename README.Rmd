@@ -22,6 +22,8 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/JoFrhwld/densityarea/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/JoFrhwld/densityarea/actions/workflows/R-CMD-check.yaml)
 [![CRAN status](https://www.r-pkg.org/badges/version/densityarea)](https://CRAN.R-project.org/package=densityarea)
+[![pkgdown](https://github.com/JoFrhwld/densityarea/actions/workflows/pkgdown.yaml/badge.svg)](https://jofrhwld.github.io/densityarea/)
+[![DOI](https://zenodo.org/badge/691165861.svg)](https://zenodo.org/badge/latestdoi/691165861)
 <!-- badges: end -->
 
 The package `{ggdensity}`[^1] allows for plotting interpretable bivariate densities by using highest density ranges (HDRs). For example:
