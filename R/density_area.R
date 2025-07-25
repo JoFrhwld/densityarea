@@ -186,7 +186,7 @@ iso_df_to_sf <- function(iso_poly_df, xname, yname){
 #' }
 #'
 #' This output will need to be passed to [sf::st_sf()] to utilize many of the
-#' features of [sf].
+#' features of [sf::sf].
 #'
 #' @details
 #' If both `rangex` and `rangey` are defined, `range_mult` will be disregarded.

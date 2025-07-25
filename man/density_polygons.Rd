@@ -62,7 +62,7 @@ If \code{as_sf=TRUE}, the data frame has the following columns:
 }
 
 This output will need to be passed to \code{\link[sf:sf]{sf::st_sf()}} to utilize many of the
-features of \link{sf}.
+features of \link[sf:sf]{sf::sf}.
 }
 }
 \description{
