@@ -1,7 +1,8 @@
-# densityarea (development version)
+# densityarea 0.1.1
 
-* excluding .Rprofile from Github releases (see #37)
+-   Excluding .Rprofile from Github releases (see #37)
+-   Added package anchor to links in documentation for `densityarea::density_polygons()`.
 
 # densityarea 0.1.0
 
-* Initial CRAN submission.
+-   Initial CRAN submission.
